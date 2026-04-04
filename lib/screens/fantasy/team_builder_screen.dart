@@ -143,6 +143,8 @@ class _TeamBuilderScreenState extends State<TeamBuilderScreen> {
   String? _viceCaptain;
   bool _loading = true;
   bool _submitting = false;
+  bool _teamJustSubmitted = false;
+  String? _teamCode;
   String? _error;
   double _budget = 100;
   double _spent = 0;
@@ -342,10 +344,15 @@ class _TeamBuilderScreenState extends State<TeamBuilderScreen> {
 
       if (mounted) {
         if (res.statusCode == 200 || res.statusCode == 201) {
+          final data = json.decode(res.body);
+          setState(() {
+            _teamJustSubmitted = true;
+            _hasExistingTeam = true;
+            _teamCode = data['team_code'] ?? data['teamCode'] ?? '';
+          });
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text('Team submitted!'), backgroundColor: Color(0xFF00E5A8)),
           );
-          Navigator.pop(context);
         } else {
           final data = json.decode(res.body);
           ScaffoldMessenger.of(context).showSnackBar(
@@ -519,6 +526,82 @@ class _TeamBuilderScreenState extends State<TeamBuilderScreen> {
                                       child: CircularProgressIndicator(strokeWidth: 2, color: Color(0xFF0F0F11)))
                                   : const Text('Submit Team', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w800)),
                             ),
+                          ),
+                        ),
+                      ),
+
+                    // Contest CTA — shown after team submitted
+                    if (_teamJustSubmitted)
+                      SafeArea(
+                        child: Container(
+                          padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: [
+                              Container(
+                                padding: const EdgeInsets.all(16),
+                                decoration: BoxDecoration(
+                                  color: const Color(0xFF00E5A8).withOpacity(0.06),
+                                  borderRadius: BorderRadius.circular(16),
+                                  border: Border.all(color: const Color(0xFF00E5A8).withOpacity(0.2)),
+                                ),
+                                child: Column(
+                                  children: [
+                                    const Icon(Icons.check_circle_rounded, size: 36, color: Color(0xFF00E5A8)),
+                                    const SizedBox(height: 8),
+                                    const Text('Team Locked In!',
+                                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.w900, color: SGColors.textPrimary)),
+                                    const SizedBox(height: 4),
+                                    Text('Now join a contest to compete',
+                                        style: TextStyle(fontSize: 13, color: SGColors.textMuted)),
+                                    const SizedBox(height: 16),
+                                    Row(
+                                      children: [
+                                        Expanded(
+                                          child: SizedBox(
+                                            height: 48,
+                                            child: ElevatedButton.icon(
+                                              onPressed: () {
+                                                Navigator.pushNamed(context,
+                                                    '/contests/${widget.matchId}?team_code=${_teamCode ?? ''}');
+                                              },
+                                              icon: const Icon(Icons.public_rounded, size: 18),
+                                              label: const Text('PUBLIC ARENA',
+                                                  style: TextStyle(fontSize: 13, fontWeight: FontWeight.w800)),
+                                              style: ElevatedButton.styleFrom(
+                                                backgroundColor: const Color(0xFF00E5A8),
+                                                foregroundColor: const Color(0xFF0F0F11),
+                                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                        const SizedBox(width: 10),
+                                        Expanded(
+                                          child: SizedBox(
+                                            height: 48,
+                                            child: ElevatedButton.icon(
+                                              onPressed: () {
+                                                Navigator.pushNamed(context,
+                                                    '/contests/${widget.matchId}?team_code=${_teamCode ?? ''}&tab=private');
+                                              },
+                                              icon: const Icon(Icons.lock_rounded, size: 18),
+                                              label: const Text('PRIVATE GAME',
+                                                  style: TextStyle(fontSize: 13, fontWeight: FontWeight.w800)),
+                                              style: ElevatedButton.styleFrom(
+                                                backgroundColor: const Color(0xFF8B5CF6),
+                                                foregroundColor: Colors.white,
+                                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
                           ),
                         ),
                       ),

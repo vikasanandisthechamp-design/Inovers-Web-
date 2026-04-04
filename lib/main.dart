@@ -9,6 +9,8 @@ import 'screens/auth/login_screen.dart';
 import 'screens/match_screen.dart';
 import 'screens/fantasy/team_builder_screen.dart';
 import 'screens/predictions/predict_screen.dart';
+import 'screens/contests/contests_screen.dart';
+import 'screens/partner/partner_screen.dart';
 import 'screens/legal/privacy_screen.dart';
 import 'screens/legal/terms_screen.dart';
 import 'theme/app_theme.dart';
@@ -75,6 +77,27 @@ class SportGodApp extends StatelessWidget {
           return MaterialPageRoute(
             builder: (_) => PredictScreen(matchId: name.replaceFirst('/predict/', '')),
           );
+        }
+        if (name.startsWith('/contests/')) {
+          final parts = name.replaceFirst('/contests/', '').split('?');
+          final matchId = parts[0];
+          String? teamCode;
+          String? tab;
+          if (parts.length > 1) {
+            final params = Uri.splitQueryString(parts[1]);
+            teamCode = params['team_code'];
+            tab = params['tab'];
+          }
+          return MaterialPageRoute(
+            builder: (_) => ContestsScreen(
+              matchId: matchId,
+              teamCode: teamCode,
+              initialTab: tab == 'private' ? 1 : 0,
+            ),
+          );
+        }
+        if (name == '/partner') {
+          return MaterialPageRoute(builder: (_) => const PartnerScreen());
         }
         if (name == '/privacy') {
           return MaterialPageRoute(builder: (_) => const PrivacyScreen());
