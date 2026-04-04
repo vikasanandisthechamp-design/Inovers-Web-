@@ -90,6 +90,9 @@ class CricketMatch extends Equatable {
   });
 
   bool get isLive => status == 'Live';
+  bool get isFinished => status == 'Finished' || status == 'Complete';
+  bool get hasStarted => isLive || isFinished || status == 'Inning Break';
+  bool get isUpcoming => !hasStarted;
 
   List<InningsRun> runsFor(String teamId) =>
       runs.where((r) => r.teamId == teamId).toList();
