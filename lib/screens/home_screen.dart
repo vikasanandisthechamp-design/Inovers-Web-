@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import '../models/cricket_models.dart';
 import '../services/api_service.dart';
 import '../theme/app_theme.dart';
@@ -65,7 +64,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   separatorBuilder: (_, __) => const SizedBox(height: 12),
                   itemBuilder: (ctx, i) => _MatchCard(
                     match:  _matches[i],
-                    onTap:  () => ctx.push('/match/${_matches[i].id}'),
+                    onTap:  () => Navigator.pushNamed(ctx, '/match/${_matches[i].id}'),
                   ),
                 ),
       ),
