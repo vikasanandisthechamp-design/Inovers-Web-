@@ -9,17 +9,30 @@ import 'screens/auth/login_screen.dart';
 import 'screens/match_screen.dart';
 import 'screens/fantasy/team_builder_screen.dart';
 import 'screens/predictions/predict_screen.dart';
+import 'screens/legal/privacy_screen.dart';
+import 'screens/legal/terms_screen.dart';
 import 'theme/app_theme.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await SupabaseService.init();
+
+  // Initialize Supabase — graceful failure
+  try {
+    await SupabaseService.init();
+  } catch (e) {
+    debugPrint('Supabase init failed: $e');
+  }
 
   SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
     statusBarColor: Colors.transparent,
     statusBarBrightness: Brightness.dark,
     statusBarIconBrightness: Brightness.light,
   ));
+
+  // Lock to portrait
+  await SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitUp,
+  ]);
 
   runApp(
     MultiProvider(
@@ -47,23 +60,27 @@ class SportGodApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       home: auth.isLoggedIn ? const ShellScreen() : const LoginScreen(),
       onGenerateRoute: (settings) {
-        if (settings.name?.startsWith('/match/') == true) {
-          final matchId = settings.name!.replaceFirst('/match/', '');
+        final name = settings.name ?? '';
+        if (name.startsWith('/match/')) {
           return MaterialPageRoute(
-            builder: (_) => MatchScreen(matchId: matchId),
+            builder: (_) => MatchScreen(matchId: name.replaceFirst('/match/', '')),
           );
         }
-        if (settings.name?.startsWith('/fantasy/build/') == true) {
-          final matchId = settings.name!.replaceFirst('/fantasy/build/', '');
+        if (name.startsWith('/fantasy/build/')) {
           return MaterialPageRoute(
-            builder: (_) => TeamBuilderScreen(matchId: matchId),
+            builder: (_) => TeamBuilderScreen(matchId: name.replaceFirst('/fantasy/build/', '')),
           );
         }
-        if (settings.name?.startsWith('/predict/') == true) {
-          final matchId = settings.name!.replaceFirst('/predict/', '');
+        if (name.startsWith('/predict/')) {
           return MaterialPageRoute(
-            builder: (_) => PredictScreen(matchId: matchId),
+            builder: (_) => PredictScreen(matchId: name.replaceFirst('/predict/', '')),
           );
+        }
+        if (name == '/privacy') {
+          return MaterialPageRoute(builder: (_) => const PrivacyScreen());
+        }
+        if (name == '/terms') {
+          return MaterialPageRoute(builder: (_) => const TermsScreen());
         }
         return null;
       },

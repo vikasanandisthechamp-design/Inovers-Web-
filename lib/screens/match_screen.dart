@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../models/cricket_models.dart';
@@ -54,44 +53,56 @@ class _MatchScreenState extends State<MatchScreen>
   }
 
   Future<void> _loadInitialData() async {
+    if (!mounted) return;
+    setState(() { _loading = true; _error = null; });
+
+    try {
+      // Load match first — critical
+      _match = await _api.getMatch(widget.matchId);
+    } catch (e) {
+      if (!mounted) return;
+      setState(() { _error = e.toString(); _loading = false; });
+      return;
+    }
+
+    // Load others in parallel — non-critical (failures are graceful)
     try {
       final results = await Future.wait([
-        _api.getMatch(widget.matchId),
         _api.getScorecard(widget.matchId),
         _api.getCommentary(widget.matchId),
         _api.getPrediction(widget.matchId),
       ]);
       if (!mounted) return;
-      setState(() {
-        _match      = results[0] as CricketMatch;
-        _scorecard  = results[1] as Scorecard;
-        _commentary.addAll((results[2] as List<BallEvent>).reversed);
-        _prediction = results[3] as Prediction;
-        _loading    = false;
-      });
-    } catch (e) {
-      if (!mounted) return;
-      setState(() { _error = e.toString(); _loading = false; });
+      _scorecard = results[0] as Scorecard?;
+      final balls = results[1] as List<BallEvent>;
+      if (balls.isNotEmpty) _commentary.addAll(balls.reversed);
+      _prediction = results[2] as Prediction;
+    } catch (_) {
+      // Non-critical — match screen still works without scorecard/prediction
     }
+
+    if (mounted) setState(() => _loading = false);
   }
 
   void _handleSnapshot(Map<String, dynamic> msg) {
     if (!mounted) return;
     setState(() {
       if (msg['match'] != null) {
-        _match = CricketMatch.fromJson(msg['match']);
+        try { _match = CricketMatch.fromJson(msg['match']); } catch (_) {}
       }
       if (msg['scorecard'] != null) {
-        _scorecard = Scorecard.fromJson(msg['scorecard']);
+        try { _scorecard = Scorecard.fromJson(msg['scorecard']); } catch (_) {}
       }
       final balls = (msg['commentary'] ?? []) as List;
       if (balls.isNotEmpty) {
-        final fresh = balls.map((b) => BallEvent.fromJson(b)).toList();
-        for (final b in fresh) {
-          if (!_commentary.any((c) => c.ballId == b.ballId)) {
-            _commentary.insert(0, b);
+        try {
+          final fresh = balls.map((b) => BallEvent.fromJson(b as Map<String, dynamic>)).toList();
+          for (final b in fresh) {
+            if (!_commentary.any((c) => c.ballId == b.ballId)) {
+              _commentary.insert(0, b);
+            }
           }
-        }
+        } catch (_) {}
       }
       _loading = false;
     });
@@ -126,7 +137,7 @@ class _MatchScreenState extends State<MatchScreen>
     return Scaffold(
       appBar: AppBar(
         title: Text(match == null
-          ? 'Loading…'
+          ? 'Loading...'
           : '${match.teamHome.short} vs ${match.teamAway.short}',
         ),
         actions: [
@@ -145,35 +156,27 @@ class _MatchScreenState extends State<MatchScreen>
         ),
       ),
       body: _loading
-        ? const _LoadingView()
+        ? const _ShimmerLoading()
         : _error != null
           ? _ErrorView(error: _error!, onRetry: _loadInitialData)
           : match == null
-            ? const _LoadingView()
+            ? const _ShimmerLoading()
             : TabBarView(
                 controller: _tabController,
                 children: [
-                  // ── Tab 1: Live ────────────────────────────────
                   _LiveTab(
                     match:      match,
                     scorecard:  _scorecard,
                     commentary: _commentary,
                     ballFlash:  _ballFlash,
+                    onRefresh:  _loadInitialData,
                   ),
-                  // ── Tab 2: Scorecard ───────────────────────────
                   _scorecard != null
-                    ? ScorecardTableWidget(
-                        scorecard: _scorecard!,
-                        match:     match,
-                      )
-                    : const Center(child: Text('Scorecard loading…')),
-                  // ── Tab 3: AI Predictions ──────────────────────
-                  _prediction != null
-                    ? AIPredictionWidget(
-                        prediction: _prediction!,
-                        match:      match,
-                      )
-                    : const Center(child: Text('Generating prediction…')),
+                    ? ScorecardTableWidget(scorecard: _scorecard!, match: match)
+                    : const _EmptyTab(icon: Icons.scoreboard_outlined, message: 'Scorecard not available yet'),
+                  _prediction != null && !_prediction!.hasError
+                    ? AIPredictionWidget(prediction: _prediction!, match: match)
+                    : const _EmptyTab(icon: Icons.psychology_outlined, message: 'AI analysis not available yet'),
                 ],
               ),
     );
@@ -187,18 +190,20 @@ class _LiveTab extends StatelessWidget {
   final Scorecard?      scorecard;
   final List<BallEvent> commentary;
   final bool            ballFlash;
+  final Future<void> Function() onRefresh;
 
   const _LiveTab({
     required this.match,
     required this.scorecard,
     required this.commentary,
     required this.ballFlash,
+    required this.onRefresh,
   });
 
   @override
   Widget build(BuildContext context) {
     return RefreshIndicator(
-      onRefresh: () async {},
+      onRefresh: onRefresh,
       child: ListView(
         padding: const EdgeInsets.all(16),
         children: [
@@ -214,8 +219,11 @@ class _LiveTab extends StatelessWidget {
             ).animate().fadeIn(duration: 400.ms, delay: 100.ms),
             const SizedBox(height: 12),
           ],
-          CommentaryFeedWidget(commentary: commentary)
-              .animate().fadeIn(duration: 500.ms, delay: 200.ms),
+          if (commentary.isEmpty && !match.isLive)
+            const _EmptyTab(icon: Icons.sports_cricket_outlined, message: 'Match has not started yet')
+          else
+            CommentaryFeedWidget(commentary: commentary)
+                .animate().fadeIn(duration: 500.ms, delay: 200.ms),
         ],
       ),
     );
@@ -240,15 +248,12 @@ class _ConnectionDot extends StatelessWidget {
       SocketState.connected    => 'Live',
       SocketState.connecting   => 'Connecting',
       SocketState.disconnected => 'Reconnecting',
-      SocketState.error        => 'Error',
+      SocketState.error        => 'Offline',
     };
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Container(
-          width: 8, height: 8,
-          decoration: BoxDecoration(color: color, shape: BoxShape.circle),
-        ),
+        Container(width: 8, height: 8, decoration: BoxDecoration(color: color, shape: BoxShape.circle)),
         const SizedBox(width: 6),
         Text(label, style: TextStyle(color: color, fontSize: 12, fontWeight: FontWeight.w600)),
       ],
@@ -256,11 +261,44 @@ class _ConnectionDot extends StatelessWidget {
   }
 }
 
-class _LoadingView extends StatelessWidget {
-  const _LoadingView();
+class _ShimmerLoading extends StatelessWidget {
+  const _ShimmerLoading();
   @override
-  Widget build(BuildContext context) => const Center(
-    child: CircularProgressIndicator(),
+  Widget build(BuildContext context) => Padding(
+    padding: const EdgeInsets.all(16),
+    child: Column(children: [
+      _shimmerBox(height: 160),
+      const SizedBox(height: 12),
+      _shimmerBox(height: 120),
+      const SizedBox(height: 12),
+      _shimmerBox(height: 200),
+    ]),
+  );
+
+  Widget _shimmerBox({required double height}) => Container(
+    width: double.infinity,
+    height: height,
+    decoration: BoxDecoration(
+      color: Colors.white.withOpacity(0.04),
+      borderRadius: BorderRadius.circular(16),
+    ),
+  );
+}
+
+class _EmptyTab extends StatelessWidget {
+  final IconData icon;
+  final String message;
+  const _EmptyTab({required this.icon, required this.message});
+  @override
+  Widget build(BuildContext context) => Center(
+    child: Padding(
+      padding: const EdgeInsets.all(40),
+      child: Column(mainAxisSize: MainAxisSize.min, children: [
+        Icon(icon, size: 48, color: SGColors.textMuted),
+        const SizedBox(height: 16),
+        Text(message, style: TextStyle(color: SGColors.textMuted, fontSize: 14), textAlign: TextAlign.center),
+      ]),
+    ),
   );
 }
 
@@ -276,13 +314,19 @@ class _ErrorView extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const Icon(Icons.error_outline, color: SGColors.wicket, size: 48),
-          const SizedBox(height: 12),
-          Text('Failed to load match', style: Theme.of(context).textTheme.titleMedium),
+          const Icon(Icons.cloud_off_rounded, color: SGColors.textMuted, size: 48),
+          const SizedBox(height: 16),
+          const Text('Could not load match', style: TextStyle(
+            color: SGColors.textPrimary, fontSize: 16, fontWeight: FontWeight.w600)),
           const SizedBox(height: 8),
-          Text(error, style: Theme.of(context).textTheme.bodySmall, textAlign: TextAlign.center),
+          Text('Check your internet connection and try again.',
+            style: TextStyle(color: SGColors.textMuted, fontSize: 13), textAlign: TextAlign.center),
           const SizedBox(height: 20),
-          FilledButton(onPressed: onRetry, child: const Text('Retry')),
+          FilledButton.icon(
+            onPressed: onRetry,
+            icon: const Icon(Icons.refresh_rounded, size: 18),
+            label: const Text('Retry'),
+          ),
         ],
       ),
     ),

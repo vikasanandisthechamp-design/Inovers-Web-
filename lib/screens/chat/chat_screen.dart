@@ -26,7 +26,7 @@ class _ChatScreenState extends State<ChatScreen> {
 
   final _starters = [
     'Who has the best strike rate in IPL 2026?',
-    'Predict today\'s match winner',
+    'Which team is likely to top the table?',
     'Best fantasy captain picks for today',
     'Compare Virat Kohli vs Rohit Sharma stats',
   ];

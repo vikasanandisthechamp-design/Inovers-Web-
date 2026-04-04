@@ -53,7 +53,7 @@ class _GamesScreenState extends State<GamesScreen> {
                   _gameTypeCard(
                     icon: Icons.psychology_rounded,
                     title: 'Predictions',
-                    subtitle: 'Test your cricket knowledge, earn points',
+                    subtitle: 'Test your cricket knowledge, score points',
                     gradient: [const Color(0xFF00E5A8), const Color(0xFF00C9FF)],
                   ),
                   const SizedBox(height: 12),
