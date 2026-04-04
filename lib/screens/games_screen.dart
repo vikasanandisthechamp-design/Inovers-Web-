@@ -53,8 +53,27 @@ class _GamesScreenState extends State<GamesScreen> {
                   _gameTypeCard(
                     icon: Icons.psychology_rounded,
                     title: 'Predictions',
-                    subtitle: 'Predict match outcomes, win coins',
+                    subtitle: 'Test your cricket knowledge, earn points',
                     gradient: [const Color(0xFF00E5A8), const Color(0xFF00C9FF)],
+                  ),
+                  const SizedBox(height: 12),
+
+                  // Anti-gambling disclaimer
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF22C55E).withOpacity(0.06),
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(color: const Color(0xFF22C55E).withOpacity(0.15)),
+                    ),
+                    child: Row(children: [
+                      Icon(Icons.volunteer_activism_rounded, size: 18, color: const Color(0xFF22C55E).withOpacity(0.8)),
+                      const SizedBox(width: 10),
+                      Expanded(child: Text(
+                        'Points-only platform. No real money. We promote skill-based sports engagement, not gambling.',
+                        style: TextStyle(fontSize: 11, color: const Color(0xFF22C55E).withOpacity(0.9), height: 1.4),
+                      )),
+                    ]),
                   ),
                   const SizedBox(height: 24),
 

@@ -258,7 +258,7 @@ class _TeamBuilderScreenState extends State<TeamBuilderScreen> {
           ),
         ),
         title: Text(name, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w700, color: SGColors.textPrimary)),
-        subtitle: Text('$team  ·  $cost cr  ·  $pts pts', style: TextStyle(fontSize: 11, color: SGColors.textMuted)),
+        subtitle: Text('$team  ·  $cost pts  ·  Avg $pts', style: TextStyle(fontSize: 11, color: SGColors.textMuted)),
         trailing: selected
             ? Row(mainAxisSize: MainAxisSize.min, children: [
                 _capButton('C', isCap, () => setState(() => _captain = isCap ? null : id)),

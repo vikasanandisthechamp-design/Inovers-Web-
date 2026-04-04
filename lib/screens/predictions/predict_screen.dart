@@ -50,7 +50,7 @@ class _PredictScreenState extends State<PredictScreen> {
         });
       } else {
         setState(() {
-          _error = 'No markets available';
+          _error = 'No prediction questions available';
           _loading = false;
         });
       }
@@ -62,7 +62,7 @@ class _PredictScreenState extends State<PredictScreen> {
     }
   }
 
-  Future<void> _submitBets() async {
+  Future<void> _submitPredictions() async {
     if (_selections.isEmpty) return;
     setState(() => _submitting = true);
 
@@ -100,7 +100,7 @@ class _PredictScreenState extends State<PredictScreen> {
       context.read<CoinsProvider>().sync(token);
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('$submitted prediction(s) placed!'),
+          content: Text('$submitted prediction(s) submitted!'),
           backgroundColor: const Color(0xFF00E5A8),
         ),
       );
@@ -121,7 +121,7 @@ class _PredictScreenState extends State<PredictScreen> {
             padding: const EdgeInsets.only(right: 16),
             child: Center(
               child: Row(children: [
-                const Icon(Icons.monetization_on_rounded, size: 18, color: Color(0xFFFFD700)),
+                const Icon(Icons.stars_rounded, size: 18, color: Color(0xFFFFD700)),
                 const SizedBox(width: 4),
                 Text('${coins.balance}', style: const TextStyle(
                   fontSize: 14, fontWeight: FontWeight.w800, color: Color(0xFFFFD700),
@@ -145,6 +145,25 @@ class _PredictScreenState extends State<PredictScreen> {
                   ],
                 ))
               : Column(children: [
+                  // Disclaimer banner
+                  Container(
+                    margin: const EdgeInsets.fromLTRB(16, 12, 16, 0),
+                    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF6366F1).withOpacity(0.08),
+                      borderRadius: BorderRadius.circular(10),
+                      border: Border.all(color: const Color(0xFF6366F1).withOpacity(0.2)),
+                    ),
+                    child: Row(children: [
+                      const Icon(Icons.info_outline_rounded, size: 16, color: Color(0xFF6366F1)),
+                      const SizedBox(width: 8),
+                      Expanded(child: Text(
+                        'Points-only game. No real money involved. Play responsibly!',
+                        style: TextStyle(fontSize: 11, color: const Color(0xFF6366F1).withOpacity(0.9)),
+                      )),
+                    ]),
+                  ),
+
                   Expanded(
                     child: ListView.builder(
                       padding: const EdgeInsets.all(16),
@@ -160,7 +179,7 @@ class _PredictScreenState extends State<PredictScreen> {
                           width: double.infinity,
                           height: 50,
                           child: ElevatedButton(
-                            onPressed: _submitting ? null : _submitBets,
+                            onPressed: _submitting ? null : _submitPredictions,
                             style: ElevatedButton.styleFrom(
                               backgroundColor: const Color(0xFF00E5A8),
                               foregroundColor: const Color(0xFF0F0F11),
@@ -169,7 +188,7 @@ class _PredictScreenState extends State<PredictScreen> {
                             child: _submitting
                                 ? const SizedBox(width: 22, height: 22, child: CircularProgressIndicator(strokeWidth: 2))
                                 : Text(
-                                    'Place ${_selections.length} Prediction(s)',
+                                    'Submit ${_selections.length} Prediction(s)',
                                     style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w800),
                                   ),
                           ),
@@ -185,8 +204,8 @@ class _PredictScreenState extends State<PredictScreen> {
     final question = market['question'] ?? market['title'] ?? '';
     final options = (market['options'] ?? []) as List;
     final status = market['status'] ?? 'open';
-    final userBet = market['user_bet'] as Map<String, dynamic>?;
-    final isLocked = status != 'open' || userBet != null;
+    final userPick = market['user_bet'] as Map<String, dynamic>?;
+    final isLocked = status != 'open' || userPick != null;
 
     return Container(
       margin: const EdgeInsets.only(bottom: 14),
@@ -204,7 +223,7 @@ class _PredictScreenState extends State<PredictScreen> {
           )),
           const SizedBox(height: 12),
 
-          if (userBet != null)
+          if (userPick != null)
             Container(
               padding: const EdgeInsets.all(10),
               decoration: BoxDecoration(
@@ -214,10 +233,10 @@ class _PredictScreenState extends State<PredictScreen> {
               child: Row(children: [
                 const Icon(Icons.check_circle_rounded, size: 18, color: Color(0xFF00E5A8)),
                 const SizedBox(width: 8),
-                Text(
-                  'Bet placed: ${userBet['option_label']} (${userBet['coins']} coins)',
+                Expanded(child: Text(
+                  'Your pick: ${userPick['option_label']} (${userPick['coins']} pts)',
                   style: const TextStyle(fontSize: 12, color: Color(0xFF00E5A8)),
-                ),
+                )),
               ]),
             )
           else
@@ -227,7 +246,7 @@ class _PredictScreenState extends State<PredictScreen> {
               children: options.map<Widget>((opt) {
                 final optId = opt['id'].toString();
                 final label = opt['label'] ?? '';
-                final odds = (opt['odds'] ?? 1.0).toDouble();
+                final multiplier = (opt['odds'] ?? 1.0).toDouble();
                 final selected = _selections[marketId]?.optionId == optId;
 
                 return GestureDetector(
@@ -239,7 +258,7 @@ class _PredictScreenState extends State<PredictScreen> {
                         _selections[marketId] = _Selection(
                           optionId: optId,
                           optionLabel: label,
-                          odds: odds,
+                          odds: multiplier,
                           coins: 50,
                         );
                       }
@@ -264,7 +283,7 @@ class _PredictScreenState extends State<PredictScreen> {
                         color: selected ? const Color(0xFF00E5A8) : SGColors.textPrimary,
                       )),
                       const SizedBox(height: 2),
-                      Text('${odds}x', style: TextStyle(
+                      Text('${multiplier}x pts', style: TextStyle(
                         fontSize: 11, color: SGColors.textMuted,
                       )),
                     ]),

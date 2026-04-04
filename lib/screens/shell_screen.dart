@@ -53,7 +53,7 @@ class _ShellScreenState extends State<ShellScreen> {
               children: [
                 _navItem(Icons.home_rounded, 'Home', 0),
                 _navItem(Icons.sports_cricket_rounded, 'Matches', 1),
-                _navItem(Icons.casino_rounded, 'Games', 2),
+                _navItem(Icons.emoji_events_rounded, 'Games', 2),
                 _navItem(Icons.person_rounded, 'Profile', 3),
               ],
             ),

@@ -56,7 +56,7 @@ class ProfileScreen extends StatelessWidget {
                         borderRadius: BorderRadius.circular(6),
                       ),
                       child: Text(
-                        auth.isPremium ? 'PREMIUM' : 'FREE',
+                        auth.isPremium ? 'PRO' : 'FREE',
                         style: TextStyle(
                           fontSize: 10, fontWeight: FontWeight.w800,
                           color: auth.isPremium ? const Color(0xFFA78BFA) : const Color(0xFF00E5A8),
@@ -71,7 +71,7 @@ class ProfileScreen extends StatelessWidget {
           ),
           const SizedBox(height: 16),
 
-          // Wallet card
+          // Points card
           Container(
             padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
@@ -81,24 +81,31 @@ class ProfileScreen extends StatelessWidget {
               borderRadius: BorderRadius.circular(18),
               border: Border.all(color: Colors.white.withOpacity(0.08)),
             ),
-            child: Row(children: [
-              const Icon(Icons.account_balance_wallet_rounded, size: 28, color: Color(0xFFFFD700)),
-              const SizedBox(width: 16),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text('SG Coins', style: TextStyle(fontSize: 12, color: SGColors.textMuted)),
-                  const SizedBox(height: 2),
-                  Text(
-                    '${coins.balance}',
-                    style: const TextStyle(fontSize: 26, fontWeight: FontWeight.w900, color: Color(0xFFFFD700)),
-                  ),
-                ],
-              ),
-              const Spacer(),
-              IconButton(
-                onPressed: () => coins.sync(auth.accessToken),
-                icon: const Icon(Icons.refresh_rounded, color: SGColors.textMuted, size: 20),
+            child: Column(children: [
+              Row(children: [
+                const Icon(Icons.stars_rounded, size: 28, color: Color(0xFFFFD700)),
+                const SizedBox(width: 16),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text('SG Points', style: TextStyle(fontSize: 12, color: SGColors.textMuted)),
+                    const SizedBox(height: 2),
+                    Text(
+                      '${coins.balance}',
+                      style: const TextStyle(fontSize: 26, fontWeight: FontWeight.w900, color: Color(0xFFFFD700)),
+                    ),
+                  ],
+                ),
+                const Spacer(),
+                IconButton(
+                  onPressed: () => coins.sync(auth.accessToken),
+                  icon: const Icon(Icons.refresh_rounded, color: SGColors.textMuted, size: 20),
+                ),
+              ]),
+              const SizedBox(height: 10),
+              Text(
+                'Virtual points for predictions & games. No real-money value.',
+                style: TextStyle(fontSize: 10, color: SGColors.textMuted, fontStyle: FontStyle.italic),
               ),
             ]),
           ),
@@ -108,8 +115,8 @@ class ProfileScreen extends StatelessWidget {
           _menuItem(context, Icons.chat_bubble_rounded, 'SportsGPT Chat', 'Ask AI anything about cricket', () {
             Navigator.push(context, MaterialPageRoute(builder: (_) => const ChatScreen()));
           }),
-          _menuItem(context, Icons.history_rounded, 'Game History', 'View past predictions & fantasy teams', null),
-          _menuItem(context, Icons.star_rounded, 'Go Premium', 'Unlock all features', null),
+          _menuItem(context, Icons.history_rounded, 'Game History', 'View past predictions & fantasy picks', null),
+          _menuItem(context, Icons.workspace_premium_rounded, 'Pro Features', 'Unlock advanced insights', null),
           _menuItem(context, Icons.info_outline_rounded, 'About', 'SportGod AI v1.0', null),
 
           const SizedBox(height: 24),
