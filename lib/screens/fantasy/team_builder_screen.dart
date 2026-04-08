@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
 import '../../models/cricket_models.dart';
@@ -562,8 +563,7 @@ class _TeamBuilderScreenState extends State<TeamBuilderScreen> {
                                             height: 48,
                                             child: ElevatedButton.icon(
                                               onPressed: () {
-                                                Navigator.pushNamed(context,
-                                                    '/contests/${widget.matchId}?team_code=${_teamCode ?? ''}');
+                                                context.push('/contests/${widget.matchId}?team_code=${_teamCode ?? ''}');
                                               },
                                               icon: const Icon(Icons.public_rounded, size: 18),
                                               label: const Text('PUBLIC ARENA',
@@ -582,8 +582,7 @@ class _TeamBuilderScreenState extends State<TeamBuilderScreen> {
                                             height: 48,
                                             child: ElevatedButton.icon(
                                               onPressed: () {
-                                                Navigator.pushNamed(context,
-                                                    '/contests/${widget.matchId}?team_code=${_teamCode ?? ''}&tab=private');
+                                                context.push('/contests/${widget.matchId}?team_code=${_teamCode ?? ''}&tab=private');
                                               },
                                               icon: const Icon(Icons.lock_rounded, size: 18),
                                               label: const Text('PRIVATE GAME',

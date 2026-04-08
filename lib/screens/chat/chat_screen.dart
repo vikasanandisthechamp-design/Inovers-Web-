@@ -51,28 +51,48 @@ class _ChatScreenState extends State<ChatScreen> {
     final token = context.read<AuthProvider>().accessToken;
 
     try {
+      // Build conversation history (last 10 messages for context)
+      final history = _messages.takeLast(10).map((m) => {
+        'role': m.isUser ? 'user' : 'assistant',
+        'content': m.text,
+      }).toList();
+
       final res = await http.post(
-        Uri.parse('$_backend/api/v1/ai/chat'),
+        Uri.parse('$_backend/api/v1/chat'),
         headers: {
           'Content-Type': 'application/json',
           if (token != null) 'Authorization': 'Bearer $token',
         },
-        body: json.encode({'message': text}),
+        body: json.encode({'question': text, 'history': history}),
       ).timeout(const Duration(seconds: 30));
 
       if (res.statusCode == 200) {
-        final data = json.decode(res.body);
-        final reply = data['response'] ?? data['message'] ?? data['answer'] ?? '';
-        setState(() => _messages.add(_Message(text: reply, isUser: false)));
+        final data = json.decode(res.body) as Map<String, dynamic>;
+        // Backend returns { answer: "..." }
+        final reply = (data['answer'] ?? data['response'] ?? data['message'] ?? '').toString().trim();
+        setState(() => _messages.add(_Message(
+          text: reply.isNotEmpty ? reply : 'No response received. Please try again.',
+          isUser: false,
+        )));
+      } else if (res.statusCode == 503) {
+        setState(() => _messages.add(_Message(
+          text: 'AI model is temporarily unavailable. Please try again in a moment.',
+          isUser: false,
+        )));
       } else {
         setState(() => _messages.add(_Message(
-          text: 'Sorry, I could not process that request. Please try again.',
+          text: 'Sorry, I could not process that request (${res.statusCode}). Please try again.',
           isUser: false,
         )));
       }
+    } on http.ClientException {
+      setState(() => _messages.add(_Message(
+        text: 'Network error. Please check your connection and try again.',
+        isUser: false,
+      )));
     } catch (_) {
       setState(() => _messages.add(_Message(
-        text: 'Network error. Please check your connection.',
+        text: 'Request timed out. The AI may be busy — please try again.',
         isUser: false,
       )));
     }

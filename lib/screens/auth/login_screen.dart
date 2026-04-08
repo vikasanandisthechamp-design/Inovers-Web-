@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import '../../providers/auth_provider.dart';
 import '../../theme/app_theme.dart';
@@ -232,7 +233,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       GestureDetector(
-                        onTap: () => Navigator.pushNamed(context, '/privacy'),
+                        onTap: () => context.push('/privacy'),
                         child: Text('Privacy Policy', style: TextStyle(fontSize: 11, color: SGColors.textMuted, decoration: TextDecoration.underline)),
                       ),
                       Padding(
@@ -240,7 +241,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         child: Text('·', style: TextStyle(color: SGColors.textMuted)),
                       ),
                       GestureDetector(
-                        onTap: () => Navigator.pushNamed(context, '/terms'),
+                        onTap: () => context.push('/terms'),
                         child: Text('Terms of Service', style: TextStyle(fontSize: 11, color: SGColors.textMuted, decoration: TextDecoration.underline)),
                       ),
                     ],

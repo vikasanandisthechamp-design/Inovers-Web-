@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import '../../models/contest_models.dart';
 import '../../services/contest_service.dart';
@@ -352,7 +353,7 @@ class _ContestsScreenState extends State<ContestsScreen>
               child: ElevatedButton(
                 onPressed: () {
                   Navigator.pop(ctx);
-                  Navigator.pushNamed(context, '/partner');
+                  context.push('/partner');
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFFA78BFA),

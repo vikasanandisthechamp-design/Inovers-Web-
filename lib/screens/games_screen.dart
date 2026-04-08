@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import '../services/api_service.dart';
 import '../models/cricket_models.dart';
 import '../theme/app_theme.dart';
@@ -14,6 +15,7 @@ class _GamesScreenState extends State<GamesScreen> {
   final _api = ApiService();
   List<CricketMatch> _matches = [];
   bool _loading = true;
+  String? _error;
 
   @override
   void initState() {
@@ -22,10 +24,12 @@ class _GamesScreenState extends State<GamesScreen> {
   }
 
   Future<void> _load() async {
-    setState(() => _loading = true);
+    setState(() { _loading = true; _error = null; });
     try {
       _matches = await _api.getLiveMatches();
-    } catch (_) {}
+    } catch (e) {
+      _error = 'Could not load matches. Check your connection.';
+    }
     if (mounted) setState(() => _loading = false);
   }
 
@@ -35,7 +39,28 @@ class _GamesScreenState extends State<GamesScreen> {
       appBar: AppBar(title: const Text('Games')),
       body: _loading
           ? const Center(child: CircularProgressIndicator())
-          : RefreshIndicator(
+          : _error != null
+              ? Center(child: Padding(
+                  padding: const EdgeInsets.all(32),
+                  child: Column(mainAxisSize: MainAxisSize.min, children: [
+                    Icon(Icons.wifi_off_rounded, size: 48, color: SGColors.textMuted),
+                    const SizedBox(height: 16),
+                    Text(_error!, textAlign: TextAlign.center,
+                        style: TextStyle(color: SGColors.textMuted, fontSize: 14)),
+                    const SizedBox(height: 20),
+                    ElevatedButton.icon(
+                      onPressed: _load,
+                      icon: const Icon(Icons.refresh_rounded, size: 18),
+                      label: const Text('Retry'),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFF22C55E),
+                        foregroundColor: Colors.black,
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                      ),
+                    ),
+                  ]),
+                ))
+              : RefreshIndicator(
               onRefresh: _load,
               child: ListView(
                 padding: const EdgeInsets.all(16),
@@ -148,7 +173,7 @@ class _GamesScreenState extends State<GamesScreen> {
         Row(children: [
           Expanded(
             child: TextButton.icon(
-              onPressed: () => Navigator.pushNamed(context, '/fantasy/build/${m.id}'),
+              onPressed: () => context.push('/fantasy/build/${m.id}'),
               icon: const Icon(Icons.groups_rounded, size: 16),
               label: const Text('Fantasy', style: TextStyle(fontSize: 12)),
               style: TextButton.styleFrom(foregroundColor: const Color(0xFF6366F1)),
@@ -157,7 +182,7 @@ class _GamesScreenState extends State<GamesScreen> {
           Container(width: 1, height: 28, color: Colors.white.withOpacity(0.06)),
           Expanded(
             child: TextButton.icon(
-              onPressed: () => Navigator.pushNamed(context, '/predict/${m.id}'),
+              onPressed: () => context.push('/predict/${m.id}'),
               icon: const Icon(Icons.psychology_rounded, size: 16),
               label: const Text('Predict', style: TextStyle(fontSize: 12)),
               style: TextButton.styleFrom(foregroundColor: const Color(0xFF00E5A8)),

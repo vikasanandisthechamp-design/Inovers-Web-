@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import '../providers/auth_provider.dart';
 import '../providers/coins_provider.dart';
 import '../theme/app_theme.dart';
-import 'chat/chat_screen.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -120,7 +120,7 @@ class ProfileScreen extends StatelessWidget {
 
           // Menu items
           _menuItem(context, Icons.chat_bubble_rounded, 'SportsGPT Chat', 'Ask AI anything about cricket', () {
-            Navigator.push(context, MaterialPageRoute(builder: (_) => const ChatScreen()));
+            context.push('/chat');
           }),
           _menuItem(context, Icons.history_rounded, 'Game History', 'View past predictions & fantasy picks', null),
           _menuItem(context, Icons.leaderboard_rounded, 'Leaderboard', 'See top cricket minds', null),
@@ -135,10 +135,10 @@ class ProfileScreen extends StatelessWidget {
             )),
           ),
           _menuItem(context, Icons.privacy_tip_outlined, 'Privacy Policy', 'How we handle your data', () {
-            Navigator.pushNamed(context, '/privacy');
+            context.push('/privacy');
           }),
           _menuItem(context, Icons.description_outlined, 'Terms of Service', 'Rules and guidelines', () {
-            Navigator.pushNamed(context, '/terms');
+            context.push('/terms');
           }),
           _menuItem(context, Icons.info_outline_rounded, 'About', 'SportGod AI v1.0', null),
 

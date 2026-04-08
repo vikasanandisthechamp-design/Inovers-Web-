@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import '../services/api_service.dart';
 import '../models/cricket_models.dart';
 import '../theme/app_theme.dart';
@@ -86,7 +87,7 @@ class _MatchesScreenState extends State<MatchesScreen> {
 
   Widget _matchCard(CricketMatch m) {
     return GestureDetector(
-      onTap: () => Navigator.pushNamed(context, '/match/${m.id}'),
+      onTap: () => context.push('/match/${m.id}'),
       child: Container(
         margin: const EdgeInsets.only(bottom: 10),
         padding: const EdgeInsets.all(16),

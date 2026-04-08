@@ -25,6 +25,9 @@ class _PredictScreenState extends State<PredictScreen> {
   bool _loading = true;
   bool _submitting = false;
   String? _error;
+  int _betAmount = 25; // coins per prediction; user can change
+
+  static const _betOptions = [10, 25, 50, 100];
 
   @override
   void initState() {
@@ -62,14 +65,30 @@ class _PredictScreenState extends State<PredictScreen> {
     }
   }
 
+  int get _totalCost => _selections.length * _betAmount;
+
   Future<void> _submitPredictions() async {
     if (_selections.isEmpty) return;
+
+    // Validate balance before submitting
+    final balance = context.read<CoinsProvider>().balance;
+    if (_totalCost > balance) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Not enough coins. Need $_totalCost, have $balance.'),
+          backgroundColor: Colors.redAccent,
+        ),
+      );
+      return;
+    }
+
     setState(() => _submitting = true);
 
     final token = context.read<AuthProvider>().accessToken;
     if (token == null) return;
 
     int submitted = 0;
+    int failed = 0;
     for (final entry in _selections.entries) {
       try {
         final sel = entry.value;
@@ -80,31 +99,39 @@ class _PredictScreenState extends State<PredictScreen> {
             'Content-Type': 'application/json',
           },
           body: json.encode({
-            'contest_id': widget.matchId,
             'match_id': widget.matchId,
             'market_id': entry.key,
             'option_id': sel.optionId,
             'option_label': sel.optionLabel,
             'odds': sel.odds,
-            'coins': sel.coins,
+            'coins': _betAmount,
           }),
         );
-
         if (res.statusCode == 200 || res.statusCode == 201) {
           submitted++;
+        } else {
+          failed++;
         }
-      } catch (_) {}
+      } catch (_) {
+        failed++;
+      }
     }
 
     if (mounted) {
       context.read<CoinsProvider>().sync(token);
+      final msg = failed == 0
+          ? '✅ $submitted prediction(s) locked in!'
+          : '$submitted submitted, $failed failed. Check your connection.';
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('$submitted prediction(s) submitted!'),
-          backgroundColor: const Color(0xFF00E5A8),
+          content: Text(msg),
+          backgroundColor: failed == 0 ? const Color(0xFF00E5A8) : Colors.orange,
         ),
       );
-      setState(() => _submitting = false);
+      setState(() {
+        _submitting = false;
+        _selections.clear();
+      });
       _loadMarkets();
     }
   }
@@ -164,6 +191,59 @@ class _PredictScreenState extends State<PredictScreen> {
                     ]),
                   ),
 
+                  // ── Bet Amount Selector ──────────────────────────────
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
+                    child: Row(children: [
+                      Text('COINS PER PICK:', style: TextStyle(
+                        fontSize: 10, fontWeight: FontWeight.w800,
+                        color: SGColors.textMuted, letterSpacing: 1.0,
+                      )),
+                      const SizedBox(width: 10),
+                      ..._betOptions.map((amt) {
+                        final selected = amt == _betAmount;
+                        return Padding(
+                          padding: const EdgeInsets.only(right: 6),
+                          child: GestureDetector(
+                            onTap: () {
+                              setState(() {
+                                _betAmount = amt;
+                                // Update all existing selections to new amount
+                                for (final k in _selections.keys) {
+                                  final s = _selections[k]!;
+                                  _selections[k] = _Selection(
+                                    optionId: s.optionId,
+                                    optionLabel: s.optionLabel,
+                                    odds: s.odds,
+                                    coins: amt,
+                                  );
+                                }
+                              });
+                            },
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                              decoration: BoxDecoration(
+                                color: selected
+                                    ? const Color(0xFF00E5A8).withOpacity(0.15)
+                                    : Colors.white.withOpacity(0.04),
+                                borderRadius: BorderRadius.circular(8),
+                                border: Border.all(
+                                  color: selected
+                                      ? const Color(0xFF00E5A8).withOpacity(0.5)
+                                      : Colors.white.withOpacity(0.08),
+                                ),
+                              ),
+                              child: Text('$amt', style: TextStyle(
+                                fontSize: 12, fontWeight: FontWeight.w700,
+                                color: selected ? const Color(0xFF00E5A8) : SGColors.textSecondary,
+                              )),
+                            ),
+                          ),
+                        );
+                      }),
+                    ]),
+                  ),
+
                   Expanded(
                     child: ListView.builder(
                       padding: const EdgeInsets.all(16),
@@ -188,8 +268,8 @@ class _PredictScreenState extends State<PredictScreen> {
                             child: _submitting
                                 ? const SizedBox(width: 22, height: 22, child: CircularProgressIndicator(strokeWidth: 2))
                                 : Text(
-                                    'Submit ${_selections.length} Prediction(s)',
-                                    style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w800),
+                                    'Lock ${_selections.length} Pick(s) · $_totalCost coins',
+                                    style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w800),
                                   ),
                           ),
                         ),
@@ -259,7 +339,7 @@ class _PredictScreenState extends State<PredictScreen> {
                           optionId: optId,
                           optionLabel: label,
                           odds: multiplier,
-                          coins: 50,
+                          coins: _betAmount,
                         );
                       }
                     });
