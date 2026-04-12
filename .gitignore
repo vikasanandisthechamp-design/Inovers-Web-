@@ -50,3 +50,4 @@ android/app/release.jks
 android/app/*.jks
 *.p12
 *.mobileprovision
+.gitnexus
