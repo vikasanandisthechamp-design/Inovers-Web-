@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import '../providers/auth_provider.dart';
 import '../providers/coins_provider.dart';
 import '../theme/app_theme.dart';
+import 'history_screen.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -166,8 +167,12 @@ class ProfileScreen extends StatelessWidget {
           _menuItem(context, Icons.chat_bubble_rounded, 'SportsGPT Chat', 'Ask AI anything about cricket', () {
             context.push('/chat');
           }),
-          _menuItem(context, Icons.history_rounded, 'Game History', 'View past predictions & fantasy picks', null),
-          _menuItem(context, Icons.leaderboard_rounded, 'Leaderboard', 'See top cricket minds', null),
+          _menuItem(context, Icons.history_rounded, 'Game History', 'View past predictions & fantasy picks', () {
+            Navigator.push(context, MaterialPageRoute(builder: (_) => const HistoryScreen()));
+          }),
+          _menuItem(context, Icons.leaderboard_rounded, 'Global Leaderboard', 'Top players this season', () {
+            context.go('/');  // Navigate home for now — global leaderboard on roadmap
+          }),
 
           const SizedBox(height: 16),
 
@@ -184,7 +189,21 @@ class ProfileScreen extends StatelessWidget {
           _menuItem(context, Icons.description_outlined, 'Terms of Service', 'Rules and guidelines', () {
             context.push('/terms');
           }),
-          _menuItem(context, Icons.info_outline_rounded, 'About', 'SportGod AI v1.0', null),
+          _menuItem(context, Icons.info_outline_rounded, 'About', 'SportGod AI v1.0', () {
+            showAboutDialog(
+              context: context,
+              applicationName: 'SportGod AI',
+              applicationVersion: '1.0.0',
+              applicationLegalese: '© 2025 SportGod AI. All rights reserved.\n\nVirtual points only. No real money.',
+              children: [
+                const SizedBox(height: 12),
+                const Text(
+                  'The AI-powered super scoreboard for cricket fans — live scores, fantasy, predictions and more.',
+                  style: TextStyle(fontSize: 13, height: 1.4),
+                ),
+              ],
+            );
+          }),
 
           const SizedBox(height: 24),
 
