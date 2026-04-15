@@ -768,9 +768,7 @@ class _ContestsScreenState extends State<ContestsScreen>
                   SizedBox(
                     width: double.infinity,
                     child: OutlinedButton(
-                      onPressed: () {
-                        // TODO: Navigate to leaderboard
-                      },
+                      onPressed: () => _showLeaderboard(c),
                       style: OutlinedButton.styleFrom(
                         foregroundColor: accent,
                         side: BorderSide(color: accent),
@@ -787,6 +785,26 @@ class _ContestsScreenState extends State<ContestsScreen>
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  // ── Leaderboard bottom sheet ──────────────────────────────────────────────
+
+  Future<void> _showLeaderboard(Contest contest) async {
+    // Show sheet immediately with a loading spinner, then fill with data
+    showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: SGColors.surface,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (_) => _LeaderboardSheet(
+        contestId: contest.id,
+        contestTitle: contest.title.isNotEmpty ? contest.title : '${contest.homeTeam} vs ${contest.awayTeam}',
+        prizePool: contest.prizePool,
+        service: _service,
       ),
     );
   }
@@ -819,6 +837,229 @@ class _ContestsScreenState extends State<ContestsScreen>
               textAlign: TextAlign.center,
               style: TextStyle(fontSize: 14, color: SGColors.textMuted)),
         ]),
+      ),
+    );
+  }
+}
+
+// ── Leaderboard bottom sheet widget ──────────────────────────────────────────
+
+class _LeaderboardSheet extends StatefulWidget {
+  final String contestId;
+  final String contestTitle;
+  final int prizePool;
+  final ContestService service;
+
+  const _LeaderboardSheet({
+    required this.contestId,
+    required this.contestTitle,
+    required this.prizePool,
+    required this.service,
+  });
+
+  @override
+  State<_LeaderboardSheet> createState() => _LeaderboardSheetState();
+}
+
+class _LeaderboardSheetState extends State<_LeaderboardSheet> {
+  List<Map<String, dynamic>> _entries = [];
+  Map<String, dynamic>? _myEntry;
+  bool _loading = true;
+  String? _error;
+
+  @override
+  void initState() {
+    super.initState();
+    _load();
+  }
+
+  Future<void> _load() async {
+    setState(() { _loading = true; _error = null; });
+    try {
+      final data = await widget.service.getLeaderboard(contestId: widget.contestId);
+      if (!mounted) return;
+      final lb = (data['leaderboard'] ?? []) as List;
+      setState(() {
+        _entries  = lb.map((e) => e as Map<String, dynamic>).toList();
+        _myEntry  = data['myEntry'] as Map<String, dynamic>?;
+        _loading  = false;
+      });
+    } catch (_) {
+      if (mounted) setState(() { _loading = false; _error = 'Could not load leaderboard'; });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    const accent = SGColors.primary;
+    return DraggableScrollableSheet(
+      expand: false,
+      initialChildSize: 0.65,
+      minChildSize: 0.4,
+      maxChildSize: 0.92,
+      builder: (_, scrollCtrl) => Column(
+        children: [
+          // Handle
+          Container(
+            margin: const EdgeInsets.only(top: 10, bottom: 6),
+            width: 40, height: 4,
+            decoration: BoxDecoration(
+              color: SGColors.textMuted.withValues(alpha: 0.4),
+              borderRadius: BorderRadius.circular(2),
+            ),
+          ),
+          // Header
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+            child: Row(
+              children: [
+                Expanded(child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(widget.contestTitle,
+                      style: const TextStyle(
+                        color: SGColors.textPrimary,
+                        fontSize: 15, fontWeight: FontWeight.w700),
+                      maxLines: 1, overflow: TextOverflow.ellipsis),
+                    if (widget.prizePool > 0)
+                      Text('Prize pool: ${widget.prizePool} pts',
+                        style: TextStyle(color: accent, fontSize: 12)),
+                  ],
+                )),
+                IconButton(
+                  icon: const Icon(Icons.refresh_rounded, size: 20),
+                  color: SGColors.textMuted,
+                  onPressed: _load,
+                ),
+              ],
+            ),
+          ),
+          const Divider(height: 1, color: Colors.white12),
+          // Column headers
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+            child: Row(
+              children: [
+                SizedBox(width: 36,
+                  child: Text('#', style: TextStyle(color: SGColors.textMuted, fontSize: 11, fontWeight: FontWeight.w600))),
+                Expanded(child: Text('Team',
+                  style: TextStyle(color: SGColors.textMuted, fontSize: 11, fontWeight: FontWeight.w600))),
+                Text('PTS',
+                  style: TextStyle(color: SGColors.textMuted, fontSize: 11, fontWeight: FontWeight.w600)),
+              ],
+            ),
+          ),
+          // Body
+          Expanded(
+            child: _loading
+              ? const Center(child: CircularProgressIndicator(strokeWidth: 2))
+              : _error != null
+                ? Center(child: Padding(
+                    padding: const EdgeInsets.all(24),
+                    child: Column(mainAxisSize: MainAxisSize.min, children: [
+                      Icon(Icons.cloud_off_rounded, color: SGColors.textMuted, size: 32),
+                      const SizedBox(height: 12),
+                      Text(_error!, style: TextStyle(color: SGColors.textMuted, fontSize: 13)),
+                      const SizedBox(height: 12),
+                      TextButton(onPressed: _load, child: const Text('Retry')),
+                    ]),
+                  ))
+                : _entries.isEmpty
+                  ? Center(child: Padding(
+                      padding: const EdgeInsets.all(32),
+                      child: Text('No entries yet',
+                        style: TextStyle(color: SGColors.textMuted, fontSize: 14)),
+                    ))
+                  : ListView.separated(
+                      controller: scrollCtrl,
+                      itemCount: _entries.length,
+                      separatorBuilder: (_, __) => const Divider(height: 1, indent: 20, endIndent: 20, color: Colors.white10),
+                      itemBuilder: (_, i) {
+                        final e     = _entries[i];
+                        final rank  = (e['rank'] as int?) ?? (i + 1);
+                        final name  = (e['user_name'] ?? e['team_name'] ?? 'Player') as String;
+                        final team  = (e['team_name'] ?? '') as String;
+                        final pts   = (e['total_pts'] ?? e['totalPts'] ?? 0) as num;
+                        final prize = (e['prize_won'] ?? 0) as num;
+                        final isMine = _myEntry != null &&
+                            e['user_id'] == _myEntry!['user_id'];
+
+                        // Rank badge color
+                        final rankColor = rank == 1
+                          ? const Color(0xFFFFD700)   // gold
+                          : rank == 2
+                            ? const Color(0xFFC0C0C0) // silver
+                            : rank == 3
+                              ? const Color(0xFFCD7F32) // bronze
+                              : SGColors.textMuted;
+
+                        return Container(
+                          color: isMine
+                            ? accent.withValues(alpha: 0.07)
+                            : Colors.transparent,
+                          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                          child: Row(
+                            children: [
+                              // Rank
+                              SizedBox(
+                                width: 36,
+                                child: Text('$rank',
+                                  style: TextStyle(
+                                    color: rankColor,
+                                    fontSize: rank <= 3 ? 14 : 13,
+                                    fontWeight: FontWeight.w700)),
+                              ),
+                              // Names
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Row(children: [
+                                      Flexible(child: Text(name,
+                                        style: TextStyle(
+                                          color: isMine ? accent : SGColors.textPrimary,
+                                          fontSize: 13, fontWeight: FontWeight.w600),
+                                        maxLines: 1, overflow: TextOverflow.ellipsis)),
+                                      if (isMine) ...[
+                                        const SizedBox(width: 4),
+                                        Container(
+                                          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 1),
+                                          decoration: BoxDecoration(
+                                            color: accent.withValues(alpha: 0.18),
+                                            borderRadius: BorderRadius.circular(4),
+                                          ),
+                                          child: Text('YOU', style: TextStyle(
+                                            color: accent, fontSize: 9, fontWeight: FontWeight.w800)),
+                                        ),
+                                      ],
+                                    ]),
+                                    if (team.isNotEmpty && team != name)
+                                      Text(team,
+                                        style: TextStyle(color: SGColors.textMuted, fontSize: 11),
+                                        maxLines: 1, overflow: TextOverflow.ellipsis),
+                                  ],
+                                ),
+                              ),
+                              // Points + prize
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.end,
+                                children: [
+                                  Text('$pts',
+                                    style: TextStyle(
+                                      color: SGColors.textPrimary,
+                                      fontSize: 14, fontWeight: FontWeight.w700)),
+                                  if (prize > 0)
+                                    Text('+$prize pts',
+                                      style: TextStyle(color: SGColors.good, fontSize: 11)),
+                                ],
+                              ),
+                            ],
+                          ),
+                        );
+                      },
+                    ),
+          ),
+        ],
       ),
     );
   }
