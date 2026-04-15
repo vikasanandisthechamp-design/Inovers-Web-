@@ -32,6 +32,7 @@ on:
 env:
   FLUTTER_VERSION: '3.29.3'
   API_BASE_URL: 'https://sportgod-backend-production.up.railway.app'
+  WEB_URL: 'https://sportgod.ai'
 
 jobs:
   # ── 1. Analyze + Test (every PR and push) ───────────────────────────────────
@@ -80,7 +81,8 @@ jobs:
       - name: Build Android App Bundle (signed)
         run: |
           flutter build appbundle --release \
-            --dart-define=API_BASE_URL=${{ env.API_BASE_URL }}
+            --dart-define=API_BASE_URL=${{ env.API_BASE_URL }} \
+            --dart-define=WEB_URL=${{ env.WEB_URL }}
         env:
           ANDROID_KEY_ALIAS:      ${{ secrets.ANDROID_KEY_ALIAS }}
           ANDROID_KEY_PASSWORD:   ${{ secrets.ANDROID_KEY_PASSWORD }}
@@ -159,7 +161,8 @@ jobs:
       - name: Build iOS (release)
         run: |
           flutter build ios --release \
-            --dart-define=API_BASE_URL=${{ env.API_BASE_URL }}
+            --dart-define=API_BASE_URL=${{ env.API_BASE_URL }} \
+            --dart-define=WEB_URL=${{ env.WEB_URL }}
 
       # ── Archive + IPA via Fastlane ───────────────────────────────────────────
       - name: Set up Ruby + Fastlane
