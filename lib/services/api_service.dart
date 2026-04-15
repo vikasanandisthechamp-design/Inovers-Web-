@@ -97,6 +97,58 @@ class ApiService {
     }
   }
 
+  // ── Premium / Payments ────────────────────────────────────────────
+  Future<Map<String, dynamic>> validateCoupon(String code, String? token) async {
+    try {
+      final uri = Uri.parse('$_baseUrl/api/v1/influencer/validate-coupon?coupon=${Uri.encodeComponent(code)}');
+      final res = await _client.get(uri, headers: {
+        if (token != null) 'Authorization': 'Bearer $token',
+      }).timeout(const Duration(seconds: 8));
+      return json.decode(res.body) as Map<String, dynamic>;
+    } catch (_) {
+      return {'valid': false, 'message': 'Could not validate coupon'};
+    }
+  }
+
+  Future<Map<String, dynamic>> createPremiumOrder({
+    required int amount,
+    required String? accessToken,
+  }) async {
+    final uri = Uri.parse('$_baseUrl/api/v1/payments/create-order');
+    final res = await _client.post(
+      uri,
+      headers: {
+        'Content-Type': 'application/json',
+        if (accessToken != null) 'Authorization': 'Bearer $accessToken',
+      },
+      body: json.encode({'amount': amount, 'currency': 'INR'}),
+    ).timeout(const Duration(seconds: 15));
+    _assertOk(res);
+    return json.decode(res.body) as Map<String, dynamic>;
+  }
+
+  Future<void> verifyPremiumPayment({
+    required String paymentId,
+    required String orderId,
+    required String signature,
+    required String? accessToken,
+  }) async {
+    final uri = Uri.parse('$_baseUrl/api/v1/payments/verify');
+    final res = await _client.post(
+      uri,
+      headers: {
+        'Content-Type': 'application/json',
+        if (accessToken != null) 'Authorization': 'Bearer $accessToken',
+      },
+      body: json.encode({
+        'razorpay_payment_id': paymentId,
+        'razorpay_order_id': orderId,
+        'razorpay_signature': signature,
+      }),
+    ).timeout(const Duration(seconds: 15));
+    _assertOk(res);
+  }
+
   void _assertOk(http.Response res) {
     if (res.statusCode < 200 || res.statusCode >= 300) {
       throw ApiException(res.statusCode, res.body);

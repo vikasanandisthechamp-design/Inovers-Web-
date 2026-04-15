@@ -116,6 +116,50 @@ class ProfileScreen extends StatelessWidget {
               ),
             ]),
           ),
+          // Premium CTA (only shown to non-premium users)
+          if (!auth.isPremium) ...[
+            const SizedBox(height: 4),
+            GestureDetector(
+              onTap: () => context.push('/premium'),
+              child: Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  gradient: const LinearGradient(
+                    colors: [Color(0xFF6C3CF7), Color(0xFF00C9FF)],
+                    begin: Alignment.topLeft, end: Alignment.bottomRight,
+                  ),
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                child: Row(children: [
+                  const Text('⚡', style: TextStyle(fontSize: 22)),
+                  const SizedBox(width: 12),
+                  const Expanded(child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text('Upgrade to PRO', style: TextStyle(
+                        fontSize: 15, fontWeight: FontWeight.w800, color: Colors.white,
+                      )),
+                      SizedBox(height: 2),
+                      Text('Unlimited AI chat, advanced predictions & more', style: TextStyle(
+                        fontSize: 11, color: Colors.white70,
+                      )),
+                    ],
+                  )),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: const Text('₹299/yr', style: TextStyle(
+                      fontSize: 12, fontWeight: FontWeight.w800, color: Color(0xFF6C3CF7),
+                    )),
+                  ),
+                ]),
+              ),
+            ),
+          ],
+
           const SizedBox(height: 24),
 
           // Menu items

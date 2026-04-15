@@ -10,6 +10,7 @@ import '../screens/contests/contests_screen.dart';
 import '../screens/partner/partner_screen.dart';
 import '../screens/legal/privacy_screen.dart';
 import '../screens/legal/terms_screen.dart';
+import '../screens/premium_screen.dart';
 
 /// Builds a [GoRouter] bound to [auth] so redirects fire on sign-in / sign-out.
 GoRouter buildRouter(AuthProvider auth) {
@@ -83,6 +84,9 @@ GoRouter buildRouter(AuthProvider auth) {
 
       // Chat — deep linkable (also navigated to from Profile)
       GoRoute(path: '/chat', builder: (_, __) => const ChatScreen()),
+
+      // Premium upgrade
+      GoRoute(path: '/premium', builder: (_, __) => const PremiumScreen()),
 
       // Static pages
       GoRoute(path: '/partner', builder: (_, __) => const PartnerScreen()),
