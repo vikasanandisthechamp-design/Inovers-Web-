@@ -200,23 +200,33 @@ class _TeamBuilderScreenState extends State<TeamBuilderScreen> {
   Future<void> _checkExistingTeam(String? token) async {
     if (token == null) return;
     try {
+      // Backend returns ALL teams for this user — filter by match_id client-side
       final res = await http.get(
-        Uri.parse('$_backend/api/v1/fantasy/teams/me?match_id=${widget.matchId}'),
+        Uri.parse('$_backend/api/v1/fantasy/user/teams'),
         headers: {'Authorization': 'Bearer $token'},
       ).timeout(const Duration(seconds: 10));
 
       if (res.statusCode == 200) {
         final data = json.decode(res.body);
-        final team = data['team'] ?? data['data'];
-        if (team != null) {
+        final allTeams = (data['teams'] ?? data['data'] ?? []) as List;
+        // Find team for this match
+        final matchTeam = allTeams.cast<Map<String, dynamic>>().where(
+          (t) => t['match_id']?.toString() == widget.matchId,
+        ).toList();
+
+        if (matchTeam.isNotEmpty) {
+          final team = matchTeam.first;
           _hasExistingTeam = true;
-          // Restore the saved team
-          final playerIds = (team['player_ids'] ?? []) as List;
-          for (final id in playerIds) {
-            _selected.add(id.toString());
+          // Restore saved players — backend stores full player objects
+          final players = (team['players'] ?? []) as List;
+          for (final p in players.cast<Map<String, dynamic>>()) {
+            final id = p['id']?.toString() ?? '';
+            if (id.isNotEmpty) {
+              _selected.add(id);
+              if (p['is_captain'] == true) _captain = id;
+              if (p['is_vc'] == true) _viceCaptain = id;
+            }
           }
-          _captain = team['captain_id']?.toString();
-          _viceCaptain = team['vice_captain_id']?.toString();
         }
       }
     } catch (_) {}
@@ -224,8 +234,9 @@ class _TeamBuilderScreenState extends State<TeamBuilderScreen> {
 
   Future<void> _loadPlayers(String? token) async {
     try {
+      // Correct endpoint: /squad/{match_id} returns players with credits + selection %
       final res = await http.get(
-        Uri.parse('$_backend/api/v1/fantasy/players/${widget.matchId}'),
+        Uri.parse('$_backend/api/v1/fantasy/squad/${widget.matchId}'),
         headers: {if (token != null) 'Authorization': 'Bearer $token'},
       ).timeout(const Duration(seconds: 10));
 
@@ -329,17 +340,30 @@ class _TeamBuilderScreenState extends State<TeamBuilderScreen> {
     }
 
     try {
+      // Build full player objects as required by /team/submit
+      final selectedPlayers = _players
+          .where((p) => _selected.contains(p['id']?.toString()))
+          .map((p) => {
+                'id':         p['id']?.toString() ?? '',
+                'name':       p['name'] ?? p['player_name'] ?? '',
+                'role':       p['role'] ?? p['position'] ?? 'BAT',
+                'team':       p['team'] ?? p['team_id'] ?? '',
+                'credits':    (p['credits'] ?? p['cost'] ?? 8.0).toDouble(),
+                'is_captain': p['id']?.toString() == _captain,
+                'is_vc':      p['id']?.toString() == _viceCaptain,
+              })
+          .toList();
+
       final res = await http.post(
-        Uri.parse('$_backend/api/v1/fantasy/teams/create'),
+        Uri.parse('$_backend/api/v1/fantasy/team/submit'),
         headers: {
           'Authorization': 'Bearer $token',
           'Content-Type': 'application/json',
         },
         body: json.encode({
-          'match_id': widget.matchId,
-          'player_ids': _selected.toList(),
-          'captain_id': _captain,
-          'vice_captain_id': _viceCaptain,
+          'match_id':   widget.matchId,
+          'contest_id': 'public',
+          'players':    selectedPlayers,
         }),
       );
 
