@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import '../../providers/auth_provider.dart';
+import '../../services/supabase_service.dart';
 import '../../theme/app_theme.dart';
 
 /// Test credentials for App Store reviewers:
@@ -21,6 +22,7 @@ class _LoginScreenState extends State<LoginScreen> {
   final _formKey = GlobalKey<FormState>();
   bool _isSignUp = false;
   bool _obscure = true;
+  bool _googleLoading = false;
   String? _error;
 
   @override
@@ -67,6 +69,37 @@ class _LoginScreenState extends State<LoginScreen> {
     }
     if (err != null && mounted) {
       setState(() => _error = err);
+    }
+  }
+
+  Future<void> _signInWithGoogle() async {
+    setState(() { _googleLoading = true; _error = null; });
+    try {
+      await SupabaseService.signInWithGoogle();
+      // GoRouter redirect fires automatically once Supabase session is set.
+    } catch (e) {
+      if (mounted) setState(() => _error = 'Google sign-in failed. Try email instead.');
+    } finally {
+      if (mounted) setState(() => _googleLoading = false);
+    }
+  }
+
+  Future<void> _forgotPassword() async {
+    final email = _emailCtrl.text.trim();
+    if (email.isEmpty) {
+      setState(() => _error = 'Enter your email address first, then tap Forgot password.');
+      return;
+    }
+    try {
+      await SupabaseService.resetPassword(email);
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content: Text('Password reset email sent! Check your inbox.'),
+          backgroundColor: Color(0xFF00E5A8),
+        ));
+      }
+    } catch (e) {
+      if (mounted) setState(() => _error = 'Could not send reset email. Check the address.');
     }
   }
 
@@ -200,6 +233,71 @@ class _LoginScreenState extends State<LoginScreen> {
                                 _isSignUp ? 'Create Account' : 'Sign In',
                                 style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w800, color: Color(0xFF0F0F11)),
                               ),
+                      ),
+                    ),
+                  ),
+
+                  const SizedBox(height: 14),
+
+                  // Forgot password (sign-in only)
+                  if (!_isSignUp)
+                    Align(
+                      alignment: Alignment.centerRight,
+                      child: GestureDetector(
+                        onTap: _forgotPassword,
+                        child: Text(
+                          'Forgot password?',
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: SGColors.textMuted,
+                            decoration: TextDecoration.underline,
+                          ),
+                        ),
+                      ),
+                    ),
+
+                  const SizedBox(height: 20),
+
+                  // Divider with "OR"
+                  Row(children: [
+                    Expanded(child: Divider(color: Colors.white.withOpacity(0.1))),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 12),
+                      child: Text('OR', style: TextStyle(
+                        fontSize: 11, color: SGColors.textMuted, letterSpacing: 1.5,
+                      )),
+                    ),
+                    Expanded(child: Divider(color: Colors.white.withOpacity(0.1))),
+                  ]),
+
+                  const SizedBox(height: 16),
+
+                  // Google SSO button
+                  SizedBox(
+                    width: double.infinity,
+                    height: 50,
+                    child: OutlinedButton.icon(
+                      onPressed: (auth.loading || _googleLoading) ? null : _signInWithGoogle,
+                      icon: _googleLoading
+                        ? const SizedBox(
+                            width: 18, height: 18,
+                            child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                          )
+                        : Image.network(
+                            'https://developers.google.com/identity/images/g-logo.png',
+                            width: 18, height: 18,
+                            errorBuilder: (_, __, ___) => const Icon(Icons.login, size: 18, color: Colors.white),
+                          ),
+                      label: const Text(
+                        'Continue with Google',
+                        style: TextStyle(
+                          fontSize: 14, fontWeight: FontWeight.w600, color: Colors.white,
+                        ),
+                      ),
+                      style: OutlinedButton.styleFrom(
+                        side: BorderSide(color: Colors.white.withOpacity(0.15)),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                        backgroundColor: Colors.white.withOpacity(0.04),
                       ),
                     ),
                   ),
