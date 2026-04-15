@@ -48,6 +48,12 @@ class _MatchScreenState extends State<MatchScreen>
     _socket.snapshotStream.listen(_handleSnapshot);
     _socket.ballStream.listen(_handleBall);
 
+    // Live scorecard push: replaces the full scorecard on wickets / overs / scoring
+    _socket.scorecardStream.listen(_handleScorecardUpdate);
+
+    // Commentary batch: arrives after reconnect — merge without duplicating
+    _socket.commentaryStream.listen(_handleCommentaryHistory);
+
     _socket.connect();
     _loadInitialData();
   }
@@ -119,6 +125,40 @@ class _MatchScreenState extends State<MatchScreen>
     });
     Future.delayed(const Duration(milliseconds: 1500), () {
       if (mounted) setState(() => _ballFlash = false);
+    });
+  }
+
+  /// Called on every `scorecard_update` push from the WebSocket.
+  /// Replaces the entire scorecard so live stats (runs, wickets, overs) stay current.
+  void _handleScorecardUpdate(Map<String, dynamic> data) {
+    if (!mounted) return;
+    try {
+      final updated = Scorecard.fromJson(data);
+      setState(() => _scorecard = updated);
+    } catch (_) {
+      // Malformed payload — keep last known scorecard
+    }
+  }
+
+  /// Called on `commentary_history` — a batch of historical balls sent after reconnect.
+  /// Merges new balls without duplicating entries already in [_commentary].
+  void _handleCommentaryHistory(List<BallEvent> balls) {
+    if (!mounted || balls.isEmpty) return;
+    setState(() {
+      for (final ball in balls) {
+        if (!_commentary.any((c) => c.ballId == ball.ballId)) {
+          _commentary.add(ball);
+        }
+      }
+      // Keep most-recent first (ballId is "over.ball" e.g. "14.3" — parse as double)
+      _commentary.sort((a, b) {
+        final da = double.tryParse(a.ballId) ?? 0.0;
+        final db = double.tryParse(b.ballId) ?? 0.0;
+        return db.compareTo(da);
+      });
+      if (_commentary.length > 200) {
+        _commentary.removeRange(200, _commentary.length);
+      }
     });
   }
 

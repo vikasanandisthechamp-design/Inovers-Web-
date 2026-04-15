@@ -21,15 +21,22 @@ class SocketService {
 
   final String matchId;
 
-  final _ballController     = StreamController<BallEvent>.broadcast();
-  final _matchController    = StreamController<CricketMatch>.broadcast();
-  final _stateController    = StreamController<SocketState>.broadcast();
-  final _snapshotController = StreamController<Map<String, dynamic>>.broadcast();
+  final _ballController      = StreamController<BallEvent>.broadcast();
+  final _matchController     = StreamController<CricketMatch>.broadcast();
+  final _stateController     = StreamController<SocketState>.broadcast();
+  final _snapshotController  = StreamController<Map<String, dynamic>>.broadcast();
+  // New streams for server-push updates
+  final _scorecardController = StreamController<Map<String, dynamic>>.broadcast();
+  final _commentaryController = StreamController<List<BallEvent>>.broadcast();
 
-  Stream<BallEvent>               get ballStream     => _ballController.stream;
-  Stream<CricketMatch>            get matchStream    => _matchController.stream;
-  Stream<SocketState>             get stateStream    => _stateController.stream;
-  Stream<Map<String, dynamic>>    get snapshotStream => _snapshotController.stream;
+  Stream<BallEvent>               get ballStream      => _ballController.stream;
+  Stream<CricketMatch>            get matchStream     => _matchController.stream;
+  Stream<SocketState>             get stateStream     => _stateController.stream;
+  Stream<Map<String, dynamic>>    get snapshotStream  => _snapshotController.stream;
+  /// Emits updated scorecard data whenever backend pushes `scorecard_update`
+  Stream<Map<String, dynamic>>    get scorecardStream => _scorecardController.stream;
+  /// Emits a batch of ball events on `commentary_history` (e.g. after reconnect)
+  Stream<List<BallEvent>>         get commentaryStream => _commentaryController.stream;
 
   SocketService(this.matchId);
 
@@ -72,12 +79,33 @@ class SocketService {
       switch (type) {
         case 'snapshot':
           _snapshotController.add(msg);
+
         case 'ball_event':
           _ballController.add(BallEvent.fromJson(msg));
-        case 'score_update':
-          break;
+
+        // Backend broadcasts full scorecard on every wicket / over / score change.
+        // Field is nested under 'scorecard' or directly in msg.
+        case 'scorecard_update':
+          final payload = (msg['scorecard'] as Map<String, dynamic>?) ?? msg;
+          _scorecardController.add(payload);
+
+        // Sent after reconnect or when the client requests history.
+        // Contains an array of ball events under 'commentary' or 'balls'.
+        case 'commentary_history':
+          final raw = (msg['commentary'] ?? msg['balls'] ?? []) as List;
+          try {
+            final balls = raw
+                .map((b) => BallEvent.fromJson(b as Map<String, dynamic>))
+                .toList();
+            if (balls.isNotEmpty) _commentaryController.add(balls);
+          } catch (_) {}
+
         case 'ping':
           _channel?.sink.add(json.encode({'type': 'pong'}));
+
+        // Unknown types: ignore silently — forward compatibility
+        default:
+          break;
       }
     } catch (_) {
       // Malformed message — ignore silently
@@ -116,5 +144,7 @@ class SocketService {
     _matchController.close();
     _stateController.close();
     _snapshotController.close();
+    _scorecardController.close();
+    _commentaryController.close();
   }
 }

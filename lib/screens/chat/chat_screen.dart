@@ -52,7 +52,7 @@ class _ChatScreenState extends State<ChatScreen> {
 
     try {
       // Build conversation history (last 10 messages for context)
-      final history = _messages.takeLast(10).map((m) => {
+      final history = (_messages.length > 10 ? _messages.sublist(_messages.length - 10) : _messages).map((m) => {
         'role': m.isUser ? 'user' : 'assistant',
         'content': m.text,
       }).toList();
