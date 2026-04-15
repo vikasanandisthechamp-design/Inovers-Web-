@@ -1,7 +1,15 @@
 import 'dart:async';
+import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../services/supabase_service.dart';
+import '../services/notification_service.dart';
+
+const _authApiBase = String.fromEnvironment(
+  'API_BASE_URL',
+  defaultValue: 'https://sportgod-backend-production.up.railway.app',
+);
 
 class AuthProvider extends ChangeNotifier {
   User? _user;
@@ -67,6 +75,24 @@ class AuthProvider extends ChangeNotifier {
   }
 
   Future<void> signOut() async {
+    // Unregister FCM token so we stop sending push notifications to this device
+    final token = NotificationService.fcmToken;
+    final currentToken = accessToken;
+    if (token != null && currentToken != null) {
+      try {
+        await http.delete(
+          Uri.parse('$_authApiBase/api/v1/notifications/unregister-device'),
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer $currentToken',
+          },
+          body: json.encode({'fcm_token': token}),
+        ).timeout(const Duration(seconds: 5));
+      } catch (_) {
+        // Non-fatal — proceed with sign out regardless
+      }
+    }
+
     await SupabaseService.signOut();
     _isPremium = false;
     notifyListeners();
