@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import '../providers/auth_provider.dart';
 import '../theme/app_theme.dart';
 
 /// Shows a unified activity feed: recent prediction results + fantasy contest results.
@@ -191,15 +189,15 @@ class _PredCard extends StatelessWidget {
           const SizedBox(height: 8),
           Row(children: [
             Text('Your pick: ${item['selected_option'] ?? '—'}',
-              style: TextStyle(fontSize: 12, color: SGColors.textSecondary)),
+              style: const TextStyle(fontSize: 12, color: SGColors.textSecondary)),
             const Spacer(),
             if (result == 'won' && won > 0)
               Text('+$won pts', style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w700, color: SGColors.good))
             else if (wagered > 0)
-              Text('-$wagered pts', style: TextStyle(fontSize: 12, color: SGColors.textMuted)),
+              Text('-$wagered pts', style: const TextStyle(fontSize: 12, color: SGColors.textMuted)),
           ]),
           const SizedBox(height: 4),
-          Text(date, style: TextStyle(fontSize: 11, color: SGColors.textMuted)),
+          Text(date, style: const TextStyle(fontSize: 11, color: SGColors.textMuted)),
         ],
       ),
     );
@@ -296,10 +294,10 @@ class _FantasyCard extends StatelessWidget {
             ],
             const Spacer(),
             if (teamCode.isNotEmpty)
-              Text(teamCode, style: TextStyle(fontSize: 11, color: SGColors.textMuted)),
+              Text(teamCode, style: const TextStyle(fontSize: 11, color: SGColors.textMuted)),
           ]),
           const SizedBox(height: 4),
-          Text(date, style: TextStyle(fontSize: 11, color: SGColors.textMuted)),
+          Text(date, style: const TextStyle(fontSize: 11, color: SGColors.textMuted)),
         ],
       ),
     );
@@ -308,7 +306,7 @@ class _FantasyCard extends StatelessWidget {
   Widget _statBadge(String label, String value, Color color) => Column(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
-      Text(label, style: TextStyle(fontSize: 9, fontWeight: FontWeight.w800, color: SGColors.textMuted, letterSpacing: 0.5)),
+      Text(label, style: const TextStyle(fontSize: 9, fontWeight: FontWeight.w800, color: SGColors.textMuted, letterSpacing: 0.5)),
       Text(value, style: TextStyle(fontSize: 14, fontWeight: FontWeight.w700, color: color)),
     ],
   );
@@ -333,7 +331,7 @@ Widget _emptyState(String title, String subtitle, IconData icon) => Center(
       Text(title, style: const TextStyle(
         fontSize: 16, fontWeight: FontWeight.w700, color: SGColors.textPrimary)),
       const SizedBox(height: 8),
-      Text(subtitle, style: TextStyle(
+      Text(subtitle, style: const TextStyle(
         fontSize: 13, color: SGColors.textMuted, height: 1.4),
         textAlign: TextAlign.center),
     ]),

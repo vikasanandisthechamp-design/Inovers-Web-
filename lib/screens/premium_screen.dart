@@ -205,12 +205,12 @@ class _PremiumScreenState extends State<PremiumScreen> {
                   style: const TextStyle(color: Colors.white),
                   decoration: InputDecoration(
                     hintText: 'Influencer / promo code',
-                    hintStyle: TextStyle(color: Colors.white.withOpacity(0.4)),
+                    hintStyle: TextStyle(color: Colors.white.withValues(alpha: 0.4)),
                     filled: true,
-                    fillColor: Colors.white.withOpacity(0.05),
+                    fillColor: Colors.white.withValues(alpha: 0.05),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
-                      borderSide: BorderSide(color: Colors.white.withOpacity(0.1)),
+                      borderSide: BorderSide(color: Colors.white.withValues(alpha: 0.1)),
                     ),
                     contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
                   ),
@@ -221,7 +221,7 @@ class _PremiumScreenState extends State<PremiumScreen> {
               ElevatedButton(
                 onPressed: _couponLoading ? null : _validateCoupon,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF00E5A8).withOpacity(0.15),
+                  backgroundColor: const Color(0xFF00E5A8).withValues(alpha: 0.15),
                   foregroundColor: const Color(0xFF00E5A8),
                   padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
@@ -299,7 +299,7 @@ class _FeatureRow extends StatelessWidget {
         Container(
           width: 36, height: 36,
           decoration: BoxDecoration(
-            color: const Color(0xFF00E5A8).withOpacity(0.1),
+            color: const Color(0xFF00E5A8).withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(10),
           ),
           child: Icon(icon, size: 18, color: const Color(0xFF00E5A8)),

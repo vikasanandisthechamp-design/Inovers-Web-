@@ -167,9 +167,9 @@ class _StatusBadge extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
       decoration: BoxDecoration(
-        color:        (isLive ? SGColors.live : SGColors.textMuted).withOpacity(0.15),
+        color:        (isLive ? SGColors.live : SGColors.textMuted).withValues(alpha: 0.15),
         borderRadius: BorderRadius.circular(20),
-        border:       Border.all(color: (isLive ? SGColors.live : SGColors.textMuted).withOpacity(0.3)),
+        border:       Border.all(color: (isLive ? SGColors.live : SGColors.textMuted).withValues(alpha: 0.3)),
       ),
       child: Row(mainAxisSize: MainAxisSize.min, children: [
         if (isLive) Container(

@@ -36,7 +36,7 @@ class LiveScoreboardWidget extends StatelessWidget {
         color:        SGColors.card,
         borderRadius: BorderRadius.circular(16),
         border:       Border.all(
-          color: ballFlash ? SGColors.good.withOpacity(0.7) : Colors.white.withOpacity(0.08),
+          color: ballFlash ? SGColors.good.withValues(alpha: 0.7) : Colors.white.withValues(alpha: 0.08),
           width: ballFlash ? 1.5 : 1,
         ),
       ),
@@ -56,8 +56,8 @@ class LiveScoreboardWidget extends StatelessWidget {
           const Divider(height: 1),
 
           // Batters
-          Padding(
-            padding: const EdgeInsets.fromLTRB(16, 12, 16, 4),
+          const Padding(
+            padding: EdgeInsets.fromLTRB(16, 12, 16, 4),
             child: Text('BATTING', style: TextStyle(
               color: SGColors.textMuted, fontSize: 10, fontWeight: FontWeight.w700, letterSpacing: 1,
             )),
@@ -69,8 +69,8 @@ class LiveScoreboardWidget extends StatelessWidget {
 
           if (bowler != null) ...[
             const Divider(height: 1),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(16, 12, 16, 4),
+            const Padding(
+              padding: EdgeInsets.fromLTRB(16, 12, 16, 4),
               child: Text('BOWLING', style: TextStyle(
                 color: SGColors.textMuted, fontSize: 10, fontWeight: FontWeight.w700, letterSpacing: 1,
               )),
@@ -108,9 +108,9 @@ class _BatterTile extends StatelessWidget {
     margin: const EdgeInsets.fromLTRB(16, 0, 16, 8),
     padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
     decoration: BoxDecoration(
-      color: isOnStrike ? SGColors.primary.withOpacity(0.1) : Colors.white.withOpacity(0.04),
+      color: isOnStrike ? SGColors.primary.withValues(alpha: 0.1) : Colors.white.withValues(alpha: 0.04),
       borderRadius: BorderRadius.circular(10),
-      border: isOnStrike ? Border.all(color: SGColors.primary.withOpacity(0.4)) : null,
+      border: isOnStrike ? Border.all(color: SGColors.primary.withValues(alpha: 0.4)) : null,
     ),
     child: Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,

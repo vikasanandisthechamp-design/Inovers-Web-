@@ -25,8 +25,8 @@ class MatchHeaderWidget extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
         border:       Border.all(
           color: ballFlash
-              ? SGColors.good.withOpacity(0.7)
-              : Colors.white.withOpacity(0.08),
+              ? SGColors.good.withValues(alpha: 0.7)
+              : Colors.white.withValues(alpha: 0.08),
           width: ballFlash ? 1.5 : 1,
         ),
       ),
@@ -68,7 +68,7 @@ class MatchHeaderWidget extends StatelessWidget {
               width: double.infinity,
               padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
               decoration: BoxDecoration(
-                border: Border(top: BorderSide(color: Colors.white.withOpacity(0.06))),
+                border: Border(top: BorderSide(color: Colors.white.withValues(alpha: 0.06))),
               ),
               child: Text(
                 match.venue,
@@ -108,9 +108,9 @@ class _TopBar extends StatelessWidget {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
             decoration: BoxDecoration(
-              color:        statusColor.withOpacity(0.15),
+              color:        statusColor.withValues(alpha: 0.15),
               borderRadius: BorderRadius.circular(20),
-              border:       Border.all(color: statusColor.withOpacity(0.3)),
+              border:       Border.all(color: statusColor.withValues(alpha: 0.3)),
             ),
             child: Text(
               match.status,
@@ -199,7 +199,7 @@ class _TeamScore extends StatelessWidget {
   Widget _placeholder() => Container(
     width: 32, height: 32,
     decoration: BoxDecoration(
-      color:  SGColors.textMuted.withOpacity(0.2),
+      color:  SGColors.textMuted.withValues(alpha: 0.2),
       shape:  BoxShape.circle,
     ),
     alignment: Alignment.center,

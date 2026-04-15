@@ -57,7 +57,7 @@ class _ScorecardTableWidgetState extends State<ScorecardTableWidget> {
                     color:        active ? SGColors.primary : SGColors.card,
                     borderRadius: BorderRadius.circular(20),
                     border:       Border.all(
-                      color: active ? SGColors.primary : Colors.white.withOpacity(0.1),
+                      color: active ? SGColors.primary : Colors.white.withValues(alpha: 0.1),
                     ),
                   ),
                   child: Text(
@@ -114,7 +114,7 @@ class _ToggleBtn extends StatelessWidget {
       duration: const Duration(milliseconds: 180),
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
       decoration: BoxDecoration(
-        color:        active ? SGColors.primary.withOpacity(0.15) : Colors.transparent,
+        color:        active ? SGColors.primary.withValues(alpha: 0.15) : Colors.transparent,
         borderRadius: BorderRadius.circular(8),
         border:       Border(bottom: BorderSide(
           color:  active ? SGColors.primary : Colors.transparent,
@@ -136,16 +136,18 @@ class _BattingTable extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (rows.isEmpty) return const Center(
+    if (rows.isEmpty) {
+      return const Center(
       child: Padding(padding: EdgeInsets.all(40),
         child: Text('No batting data', style: TextStyle(color: SGColors.textMuted))),
     );
+    }
 
     return SGCard(
       padding: EdgeInsets.zero,
       child: Column(
         children: [
-          _HeaderRow(cols: const ['Batter', 'R', 'B', '4s', '6s', 'SR']),
+          const _HeaderRow(cols: ['Batter', 'R', 'B', '4s', '6s', 'SR']),
           ...rows.asMap().entries.map((e) => _BattingRow(row: e.value, alt: e.key.isOdd)),
         ],
       ),
@@ -159,16 +161,18 @@ class _BowlingTable extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (rows.isEmpty) return const Center(
+    if (rows.isEmpty) {
+      return const Center(
       child: Padding(padding: EdgeInsets.all(40),
         child: Text('No bowling data', style: TextStyle(color: SGColors.textMuted))),
     );
+    }
 
     return SGCard(
       padding: EdgeInsets.zero,
       child: Column(
         children: [
-          _HeaderRow(cols: const ['Bowler', 'O', 'M', 'R', 'W', 'Eco']),
+          const _HeaderRow(cols: ['Bowler', 'O', 'M', 'R', 'W', 'Eco']),
           ...rows.asMap().entries.map((e) => _BowlingRow(row: e.value, alt: e.key.isOdd)),
         ],
       ),
@@ -184,7 +188,7 @@ class _HeaderRow extends StatelessWidget {
   Widget build(BuildContext context) => Container(
     padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
     decoration: BoxDecoration(
-      color:        Colors.white.withOpacity(0.04),
+      color:        Colors.white.withValues(alpha: 0.04),
       borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
     ),
     child: Row(
@@ -208,7 +212,7 @@ class _BattingRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Container(
     padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-    color: alt ? Colors.white.withOpacity(0.02) : Colors.transparent,
+    color: alt ? Colors.white.withValues(alpha: 0.02) : Colors.transparent,
     child: Row(
       children: [
         Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -237,7 +241,7 @@ class _BowlingRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Container(
     padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-    color: alt ? Colors.white.withOpacity(0.02) : Colors.transparent,
+    color: alt ? Colors.white.withValues(alpha: 0.02) : Colors.transparent,
     child: Row(
       children: [
         Expanded(child: Text(row.playerName, style: const TextStyle(color: SGColors.textPrimary, fontSize: 13, fontWeight: FontWeight.w500), overflow: TextOverflow.ellipsis)),

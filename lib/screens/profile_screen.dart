@@ -26,12 +26,12 @@ class ProfileScreen extends StatelessWidget {
             decoration: BoxDecoration(
               color: SGColors.card,
               borderRadius: BorderRadius.circular(18),
-              border: Border.all(color: Colors.white.withOpacity(0.08)),
+              border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
             ),
             child: Row(children: [
               CircleAvatar(
                 radius: 28,
-                backgroundColor: const Color(0xFF00E5A8).withOpacity(0.15),
+                backgroundColor: const Color(0xFF00E5A8).withValues(alpha: 0.15),
                 child: Text(
                   (user?.email?.substring(0, 1) ?? 'U').toUpperCase(),
                   style: const TextStyle(fontSize: 22, fontWeight: FontWeight.w800, color: Color(0xFF00E5A8)),
@@ -51,8 +51,8 @@ class ProfileScreen extends StatelessWidget {
                     padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                     decoration: BoxDecoration(
                       color: auth.isPremium
-                          ? const Color(0xFFA78BFA).withOpacity(0.15)
-                          : const Color(0xFF00E5A8).withOpacity(0.1),
+                          ? const Color(0xFFA78BFA).withValues(alpha: 0.15)
+                          : const Color(0xFF00E5A8).withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(6),
                     ),
                     child: Text(
@@ -76,7 +76,7 @@ class ProfileScreen extends StatelessWidget {
             decoration: BoxDecoration(
               gradient: const LinearGradient(colors: [Color(0xFF1C1C21), Color(0xFF252530)]),
               borderRadius: BorderRadius.circular(18),
-              border: Border.all(color: Colors.white.withOpacity(0.08)),
+              border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
             ),
             child: Column(children: [
               Row(children: [
@@ -85,7 +85,7 @@ class ProfileScreen extends StatelessWidget {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text('SG Points', style: TextStyle(fontSize: 12, color: SGColors.textMuted)),
+                    const Text('SG Points', style: TextStyle(fontSize: 12, color: SGColors.textMuted)),
                     const SizedBox(height: 2),
                     Text(
                       '${coins.balance}',
@@ -103,13 +103,13 @@ class ProfileScreen extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.03),
+                  color: Colors.white.withValues(alpha: 0.03),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Row(children: [
-                  Icon(Icons.info_outline_rounded, size: 14, color: SGColors.textMuted.withOpacity(0.6)),
+                  Icon(Icons.info_outline_rounded, size: 14, color: SGColors.textMuted.withValues(alpha: 0.6)),
                   const SizedBox(width: 6),
-                  Expanded(child: Text(
+                  const Expanded(child: Text(
                     'Virtual points for games only. No real-money value. Cannot be redeemed or exchanged.',
                     style: TextStyle(fontSize: 10, color: SGColors.textMuted, fontStyle: FontStyle.italic, height: 1.3),
                   )),
@@ -177,8 +177,8 @@ class ProfileScreen extends StatelessWidget {
           const SizedBox(height: 16),
 
           // Legal section header
-          Padding(
-            padding: const EdgeInsets.only(left: 4, bottom: 8),
+          const Padding(
+            padding: EdgeInsets.only(left: 4, bottom: 8),
             child: Text('LEGAL', style: TextStyle(
               fontSize: 10, fontWeight: FontWeight.w800, color: SGColors.textMuted, letterSpacing: 1.2,
             )),
@@ -211,17 +211,17 @@ class ProfileScreen extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(14),
             decoration: BoxDecoration(
-              color: const Color(0xFF22C55E).withOpacity(0.04),
+              color: const Color(0xFF22C55E).withValues(alpha: 0.04),
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: const Color(0xFF22C55E).withOpacity(0.1)),
+              border: Border.all(color: const Color(0xFF22C55E).withValues(alpha: 0.1)),
             ),
             child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Icon(Icons.volunteer_activism_rounded, size: 18, color: const Color(0xFF22C55E).withOpacity(0.7)),
+              Icon(Icons.volunteer_activism_rounded, size: 18, color: const Color(0xFF22C55E).withValues(alpha: 0.7)),
               const SizedBox(width: 10),
               Expanded(child: Text(
                 'SportGod AI promotes skill-based sports engagement as a healthy alternative to gambling. '
                 'No real money is involved anywhere in this app.',
-                style: TextStyle(fontSize: 11, color: const Color(0xFF22C55E).withOpacity(0.8), height: 1.4),
+                style: TextStyle(fontSize: 11, color: const Color(0xFF22C55E).withValues(alpha: 0.8), height: 1.4),
               )),
             ]),
           ),
@@ -247,14 +247,14 @@ class ProfileScreen extends StatelessWidget {
       decoration: BoxDecoration(
         color: SGColors.card,
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: Colors.white.withOpacity(0.06)),
+        border: Border.all(color: Colors.white.withValues(alpha: 0.06)),
       ),
       child: ListTile(
         onTap: onTap,
         leading: Icon(icon, color: const Color(0xFF00E5A8), size: 22),
         title: Text(title, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: SGColors.textPrimary)),
-        subtitle: Text(subtitle, style: TextStyle(fontSize: 12, color: SGColors.textMuted)),
-        trailing: Icon(Icons.chevron_right_rounded, color: SGColors.textMuted, size: 20),
+        subtitle: Text(subtitle, style: const TextStyle(fontSize: 12, color: SGColors.textMuted)),
+        trailing: const Icon(Icons.chevron_right_rounded, color: SGColors.textMuted, size: 20),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
       ),
     );

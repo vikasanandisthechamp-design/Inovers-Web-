@@ -1,4 +1,5 @@
 /// Models for Contests, Partners, and Referrals
+library;
 
 class Contest {
   final String id;

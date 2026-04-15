@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import '../../providers/auth_provider.dart';
 import '../../providers/coins_provider.dart';
 import '../../theme/app_theme.dart';
 
@@ -282,16 +281,16 @@ class _Disclaimer extends StatelessWidget {
     margin: const EdgeInsets.fromLTRB(16, 12, 16, 0),
     padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
     decoration: BoxDecoration(
-      color: const Color(0xFF6366F1).withOpacity(0.08),
+      color: const Color(0xFF6366F1).withValues(alpha: 0.08),
       borderRadius: BorderRadius.circular(10),
-      border: Border.all(color: const Color(0xFF6366F1).withOpacity(0.2)),
+      border: Border.all(color: const Color(0xFF6366F1).withValues(alpha: 0.2)),
     ),
     child: Row(children: [
       const Icon(Icons.info_outline_rounded, size: 16, color: Color(0xFF6366F1)),
       const SizedBox(width: 8),
       Expanded(child: Text(
         'Points-only game. No real money involved.',
-        style: TextStyle(fontSize: 11, color: const Color(0xFF6366F1).withOpacity(0.9)),
+        style: TextStyle(fontSize: 11, color: const Color(0xFF6366F1).withValues(alpha: 0.9)),
       )),
     ]),
   );
@@ -307,7 +306,7 @@ class _BetSelector extends StatelessWidget {
   Widget build(BuildContext context) => Padding(
     padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
     child: Row(children: [
-      Text('COINS PER PICK:', style: TextStyle(
+      const Text('COINS PER PICK:', style: TextStyle(
         fontSize: 10, fontWeight: FontWeight.w800,
         color: SGColors.textMuted, letterSpacing: 1.0,
       )),
@@ -321,10 +320,10 @@ class _BetSelector extends StatelessWidget {
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
               decoration: BoxDecoration(
-                color: active ? const Color(0xFF00E5A8).withOpacity(0.15) : Colors.white.withOpacity(0.04),
+                color: active ? const Color(0xFF00E5A8).withValues(alpha: 0.15) : Colors.white.withValues(alpha: 0.04),
                 borderRadius: BorderRadius.circular(8),
                 border: Border.all(
-                  color: active ? const Color(0xFF00E5A8).withOpacity(0.5) : Colors.white.withOpacity(0.08),
+                  color: active ? const Color(0xFF00E5A8).withValues(alpha: 0.5) : Colors.white.withValues(alpha: 0.08),
                 ),
               ),
               child: Text('$amt', style: TextStyle(
@@ -368,7 +367,7 @@ class _QuestionCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: SGColors.card,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.white.withOpacity(0.08)),
+        border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
       ),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         Row(children: [
@@ -381,10 +380,10 @@ class _QuestionCard extends StatelessWidget {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
               decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.06),
+                color: Colors.white.withValues(alpha: 0.06),
                 borderRadius: BorderRadius.circular(6),
               ),
-              child: Text(status.toUpperCase(), style: TextStyle(
+              child: Text(status.toUpperCase(), style: const TextStyle(
                 fontSize: 10, fontWeight: FontWeight.w800, color: SGColors.textMuted, letterSpacing: 0.8,
               )),
             ),
@@ -410,10 +409,10 @@ class _QuestionCard extends StatelessWidget {
                 child: Container(
                   padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                   decoration: BoxDecoration(
-                    color: picked ? const Color(0xFF00E5A8).withOpacity(0.12) : Colors.white.withOpacity(0.04),
+                    color: picked ? const Color(0xFF00E5A8).withValues(alpha: 0.12) : Colors.white.withValues(alpha: 0.04),
                     borderRadius: BorderRadius.circular(12),
                     border: Border.all(
-                      color: picked ? const Color(0xFF00E5A8).withOpacity(0.4) : Colors.white.withOpacity(0.1),
+                      color: picked ? const Color(0xFF00E5A8).withValues(alpha: 0.4) : Colors.white.withValues(alpha: 0.1),
                     ),
                   ),
                   child: Column(children: [
@@ -422,7 +421,7 @@ class _QuestionCard extends StatelessWidget {
                       color: picked ? const Color(0xFF00E5A8) : SGColors.textPrimary,
                     )),
                     const SizedBox(height: 2),
-                    Text('${odds}x pts', style: TextStyle(fontSize: 11, color: SGColors.textMuted)),
+                    Text('${odds}x pts', style: const TextStyle(fontSize: 11, color: SGColors.textMuted)),
                   ]),
                 ),
               );
@@ -452,7 +451,7 @@ class _UserBetBadge extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.08),
+        color: color.withValues(alpha: 0.08),
         borderRadius: BorderRadius.circular(10),
       ),
       child: Row(children: [
@@ -476,9 +475,9 @@ class _ErrorState extends StatelessWidget {
   Widget build(BuildContext context) => Center(child: Column(
     mainAxisSize: MainAxisSize.min,
     children: [
-      Icon(Icons.psychology_outlined, size: 48, color: SGColors.textMuted),
+      const Icon(Icons.psychology_outlined, size: 48, color: SGColors.textMuted),
       const SizedBox(height: 12),
-      Text(error, style: TextStyle(color: SGColors.textMuted)),
+      Text(error, style: const TextStyle(color: SGColors.textMuted)),
       const SizedBox(height: 16),
       TextButton(onPressed: onRetry, child: const Text('Retry')),
     ],
@@ -493,11 +492,11 @@ class _EmptyState extends StatelessWidget {
   Widget build(BuildContext context) => Center(child: Column(
     mainAxisSize: MainAxisSize.min,
     children: [
-      Icon(Icons.timer_outlined, size: 48, color: SGColors.textMuted),
+      const Icon(Icons.timer_outlined, size: 48, color: SGColors.textMuted),
       const SizedBox(height: 12),
-      Text('Predictions open before match start', style: TextStyle(color: SGColors.textMuted, fontSize: 14)),
+      const Text('Predictions open before match start', style: TextStyle(color: SGColors.textMuted, fontSize: 14)),
       const SizedBox(height: 6),
-      Text('Check back soon!', style: TextStyle(color: SGColors.textMuted, fontSize: 12)),
+      const Text('Check back soon!', style: TextStyle(color: SGColors.textMuted, fontSize: 12)),
       const SizedBox(height: 16),
       TextButton(onPressed: onRetry, child: const Text('Refresh')),
     ],

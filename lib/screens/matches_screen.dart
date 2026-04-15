@@ -64,9 +64,9 @@ class _MatchesScreenState extends State<MatchesScreen> {
                     ...other.map(_matchCard),
                   ],
                   if (_matches.isEmpty)
-                    Center(
+                    const Center(
                       child: Padding(
-                        padding: const EdgeInsets.all(40),
+                        padding: EdgeInsets.all(40),
                         child: Text('No matches found',
                           style: TextStyle(color: SGColors.textMuted)),
                       ),
@@ -94,7 +94,7 @@ class _MatchesScreenState extends State<MatchesScreen> {
         decoration: BoxDecoration(
           color: SGColors.card,
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: Colors.white.withOpacity(0.08)),
+          border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -118,13 +118,13 @@ class _MatchesScreenState extends State<MatchesScreen> {
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                     decoration: BoxDecoration(
-                      color: SGColors.live.withOpacity(0.15),
+                      color: SGColors.live.withValues(alpha: 0.15),
                       borderRadius: BorderRadius.circular(6),
                     ),
                     child: const Text('LIVE', style: TextStyle(fontSize: 10, fontWeight: FontWeight.w800, color: SGColors.live)),
                   ),
                 const Spacer(),
-                Text(m.matchType, style: TextStyle(fontSize: 11, color: SGColors.textMuted)),
+                Text(m.matchType, style: const TextStyle(fontSize: 11, color: SGColors.textMuted)),
               ],
             ),
           ],
@@ -143,7 +143,7 @@ class _MatchesScreenState extends State<MatchesScreen> {
           Text(latest.scoreString, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w800, color: SGColors.textPrimary)),
         if (latest != null) ...[
           const SizedBox(width: 6),
-          Text(latest.oversString, style: TextStyle(fontSize: 11, color: SGColors.textMuted)),
+          Text(latest.oversString, style: const TextStyle(fontSize: 11, color: SGColors.textMuted)),
         ],
       ],
     );

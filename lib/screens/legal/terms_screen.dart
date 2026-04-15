@@ -16,7 +16,7 @@ class TermsScreen extends StatelessWidget {
             fontSize: 22, fontWeight: FontWeight.w800, color: SGColors.textPrimary,
           )),
           const SizedBox(height: 6),
-          Text('Last updated: April 2026', style: TextStyle(fontSize: 12, color: SGColors.textMuted)),
+          const Text('Last updated: April 2026', style: TextStyle(fontSize: 12, color: SGColors.textMuted)),
           const SizedBox(height: 24),
 
           _section('1. Acceptance of Terms',

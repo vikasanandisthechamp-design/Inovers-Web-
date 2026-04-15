@@ -42,7 +42,7 @@ class _ShellScreenState extends State<ShellScreen> {
         decoration: BoxDecoration(
           color: const Color(0xFF0F0F11),
           border: Border(
-            top: BorderSide(color: Colors.white.withOpacity(0.08)),
+            top: BorderSide(color: Colors.white.withValues(alpha: 0.08)),
           ),
         ),
         child: SafeArea(
@@ -74,12 +74,12 @@ class _ShellScreenState extends State<ShellScreen> {
           mainAxisSize: MainAxisSize.min,
           children: [
             Icon(icon, size: 24,
-              color: active ? const Color(0xFF00E5A8) : Colors.white.withOpacity(0.4)),
+              color: active ? const Color(0xFF00E5A8) : Colors.white.withValues(alpha: 0.4)),
             const SizedBox(height: 4),
             Text(label, style: TextStyle(
               fontSize: 10,
               fontWeight: active ? FontWeight.w700 : FontWeight.w400,
-              color: active ? const Color(0xFF00E5A8) : Colors.white.withOpacity(0.4),
+              color: active ? const Color(0xFF00E5A8) : Colors.white.withValues(alpha: 0.4),
             )),
           ],
         ),

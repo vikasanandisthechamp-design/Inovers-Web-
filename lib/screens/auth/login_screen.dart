@@ -145,19 +145,19 @@ class _LoginScreenState extends State<LoginScreen> {
                   const SizedBox(height: 6),
                   Text(
                     _isSignUp ? 'Create your account' : 'Welcome back',
-                    style: TextStyle(fontSize: 14, color: SGColors.textMuted),
+                    style: const TextStyle(fontSize: 14, color: SGColors.textMuted),
                   ),
                   const SizedBox(height: 8),
                   // Anti-gambling tagline
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                     decoration: BoxDecoration(
-                      color: const Color(0xFF22C55E).withOpacity(0.06),
+                      color: const Color(0xFF22C55E).withValues(alpha: 0.06),
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: Text(
                       'Skill-based cricket fun. No real money.',
-                      style: TextStyle(fontSize: 11, color: const Color(0xFF22C55E).withOpacity(0.8)),
+                      style: TextStyle(fontSize: 11, color: const Color(0xFF22C55E).withValues(alpha: 0.8)),
                     ),
                   ),
                   const SizedBox(height: 32),
@@ -195,7 +195,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     Container(
                       padding: const EdgeInsets.all(10),
                       decoration: BoxDecoration(
-                        color: Colors.redAccent.withOpacity(0.08),
+                        color: Colors.redAccent.withValues(alpha: 0.08),
                         borderRadius: BorderRadius.circular(10),
                       ),
                       child: Row(children: [
@@ -245,7 +245,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       alignment: Alignment.centerRight,
                       child: GestureDetector(
                         onTap: _forgotPassword,
-                        child: Text(
+                        child: const Text(
                           'Forgot password?',
                           style: TextStyle(
                             fontSize: 12,
@@ -260,14 +260,14 @@ class _LoginScreenState extends State<LoginScreen> {
 
                   // Divider with "OR"
                   Row(children: [
-                    Expanded(child: Divider(color: Colors.white.withOpacity(0.1))),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 12),
+                    Expanded(child: Divider(color: Colors.white.withValues(alpha: 0.1))),
+                    const Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 12),
                       child: Text('OR', style: TextStyle(
                         fontSize: 11, color: SGColors.textMuted, letterSpacing: 1.5,
                       )),
                     ),
-                    Expanded(child: Divider(color: Colors.white.withOpacity(0.1))),
+                    Expanded(child: Divider(color: Colors.white.withValues(alpha: 0.1))),
                   ]),
 
                   const SizedBox(height: 16),
@@ -295,9 +295,9 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                       ),
                       style: OutlinedButton.styleFrom(
-                        side: BorderSide(color: Colors.white.withOpacity(0.15)),
+                        side: BorderSide(color: Colors.white.withValues(alpha: 0.15)),
                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
-                        backgroundColor: Colors.white.withOpacity(0.04),
+                        backgroundColor: Colors.white.withValues(alpha: 0.04),
                       ),
                     ),
                   ),
@@ -312,7 +312,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     }),
                     child: RichText(
                       text: TextSpan(
-                        style: TextStyle(fontSize: 13, color: SGColors.textMuted),
+                        style: const TextStyle(fontSize: 13, color: SGColors.textMuted),
                         children: [
                           TextSpan(text: _isSignUp ? 'Already have an account? ' : "Don't have an account? "),
                           TextSpan(
@@ -332,15 +332,15 @@ class _LoginScreenState extends State<LoginScreen> {
                     children: [
                       GestureDetector(
                         onTap: () => context.push('/privacy'),
-                        child: Text('Privacy Policy', style: TextStyle(fontSize: 11, color: SGColors.textMuted, decoration: TextDecoration.underline)),
+                        child: const Text('Privacy Policy', style: TextStyle(fontSize: 11, color: SGColors.textMuted, decoration: TextDecoration.underline)),
                       ),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 12),
+                      const Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 12),
                         child: Text('·', style: TextStyle(color: SGColors.textMuted)),
                       ),
                       GestureDetector(
                         onTap: () => context.push('/terms'),
-                        child: Text('Terms of Service', style: TextStyle(fontSize: 11, color: SGColors.textMuted, decoration: TextDecoration.underline)),
+                        child: const Text('Terms of Service', style: TextStyle(fontSize: 11, color: SGColors.textMuted, decoration: TextDecoration.underline)),
                       ),
                     ],
                   ),
@@ -356,17 +356,17 @@ class _LoginScreenState extends State<LoginScreen> {
   InputDecoration _inputDecor(String hint, IconData icon) {
     return InputDecoration(
       hintText: hint,
-      hintStyle: TextStyle(color: SGColors.textMuted),
+      hintStyle: const TextStyle(color: SGColors.textMuted),
       prefixIcon: Icon(icon, color: SGColors.textMuted, size: 20),
       filled: true,
-      fillColor: Colors.white.withOpacity(0.05),
+      fillColor: Colors.white.withValues(alpha: 0.05),
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(14),
-        borderSide: BorderSide(color: Colors.white.withOpacity(0.1)),
+        borderSide: BorderSide(color: Colors.white.withValues(alpha: 0.1)),
       ),
       enabledBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(14),
-        borderSide: BorderSide(color: Colors.white.withOpacity(0.1)),
+        borderSide: BorderSide(color: Colors.white.withValues(alpha: 0.1)),
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(14),

@@ -56,14 +56,22 @@ class FantasyPoints {
     pts += b.runs * perRun;
     pts += b.fours * perFour;
     pts += b.sixes * perSix;
-    if (b.runs >= 100) pts += century;
-    else if (b.runs >= 50) pts += halfCentury;
-    if (b.runs == 0 && !b.isNotOut && b.balls > 0) pts += duckPenalty;
+    if (b.runs >= 100) {
+      pts += century;
+    } else if (b.runs >= 50) {
+      pts += halfCentury;
+    }
+    if (b.runs == 0 && !b.isNotOut && b.balls > 0) {
+      pts += duckPenalty;
+    }
 
     // Strike rate bonus/penalty (only for T20/ODI with min 10 balls)
     if (b.balls >= 10 && (matchType == 'T20' || matchType == 'ODI')) {
-      if (b.strikeRate > 150) pts += strikeRateBonus150;
-      else if (b.strikeRate < 50) pts += strikeRateBonus75;
+      if (b.strikeRate > 150) {
+        pts += strikeRateBonus150;
+      } else if (b.strikeRate < 50) {
+        pts += strikeRateBonus75;
+      }
     }
 
     return pts;
@@ -76,16 +84,25 @@ class FantasyPoints {
     pts += b.maidens * perMaiden;
 
     // Wicket haul bonuses
-    if (b.wickets >= 5) pts += fiveWickets;
-    else if (b.wickets >= 4) pts += fourWickets;
-    else if (b.wickets >= 3) pts += threeWickets;
+    if (b.wickets >= 5) {
+      pts += fiveWickets;
+    } else if (b.wickets >= 4) {
+      pts += fourWickets;
+    } else if (b.wickets >= 3) {
+      pts += threeWickets;
+    }
 
     // Economy bonus/penalty (min 2 overs bowled)
     if (b.overs >= 2) {
-      if (b.economy < 5) pts += economyBonusLow;
-      else if (b.economy < 6) pts += economyBonusMid;
-      else if (b.economy > 12) pts += economyPenaltyVHigh;
-      else if (b.economy > 10) pts += economyPenaltyHigh;
+      if (b.economy < 5) {
+        pts += economyBonusLow;
+      } else if (b.economy < 6) {
+        pts += economyBonusMid;
+      } else if (b.economy > 12) {
+        pts += economyPenaltyVHigh;
+      } else if (b.economy > 10) {
+        pts += economyPenaltyHigh;
+      }
     }
 
     return pts;
@@ -415,7 +432,7 @@ class _TeamBuilderScreenState extends State<TeamBuilderScreen> {
               child: Center(child: Container(
                 padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                 decoration: BoxDecoration(
-                  color: const Color(0xFF00E5A8).withOpacity(0.1),
+                  color: const Color(0xFF00E5A8).withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: Text(
@@ -430,7 +447,7 @@ class _TeamBuilderScreenState extends State<TeamBuilderScreen> {
               child: Center(child: Container(
                 padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                 decoration: BoxDecoration(
-                  color: const Color(0xFF00E5A8).withOpacity(0.1),
+                  color: const Color(0xFF00E5A8).withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: Text(
@@ -453,8 +470,8 @@ class _TeamBuilderScreenState extends State<TeamBuilderScreen> {
                         width: double.infinity,
                         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                         color: _match!.isLive
-                            ? SGColors.live.withOpacity(0.1)
-                            : SGColors.textMuted.withOpacity(0.1),
+                            ? SGColors.live.withValues(alpha: 0.1)
+                            : SGColors.textMuted.withValues(alpha: 0.1),
                         child: Row(children: [
                           Icon(
                             _match!.isLive ? Icons.lock_clock_rounded : Icons.lock_rounded,
@@ -481,13 +498,13 @@ class _TeamBuilderScreenState extends State<TeamBuilderScreen> {
                         padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
                         color: SGColors.card,
                         child: Row(children: [
-                          Text('Budget: ', style: TextStyle(fontSize: 12, color: SGColors.textMuted)),
+                          const Text('Budget: ', style: TextStyle(fontSize: 12, color: SGColors.textMuted)),
                           Expanded(
                             child: ClipRRect(
                               borderRadius: BorderRadius.circular(4),
                               child: LinearProgressIndicator(
                                 value: _budget > 0 ? _spent / _budget : 0,
-                                backgroundColor: Colors.white.withOpacity(0.08),
+                                backgroundColor: Colors.white.withValues(alpha: 0.08),
                                 valueColor: AlwaysStoppedAnimation(
                                   _spent / _budget > 0.9 ? Colors.redAccent : const Color(0xFF00E5A8),
                                 ),
@@ -511,7 +528,7 @@ class _TeamBuilderScreenState extends State<TeamBuilderScreen> {
                         child: Row(children: [
                           const Icon(Icons.stars_rounded, size: 20, color: Color(0xFFFFD700)),
                           const SizedBox(width: 10),
-                          Text('Total Team Points', style: TextStyle(fontSize: 13, color: SGColors.textMuted)),
+                          const Text('Total Team Points', style: TextStyle(fontSize: 13, color: SGColors.textMuted)),
                           const Spacer(),
                           Text(
                             _totalTeamPoints.toStringAsFixed(1),
@@ -523,7 +540,7 @@ class _TeamBuilderScreenState extends State<TeamBuilderScreen> {
                     // Player list
                     Expanded(
                       child: _players.isEmpty
-                          ? Center(child: Text('No players available', style: TextStyle(color: SGColors.textMuted)))
+                          ? const Center(child: Text('No players available', style: TextStyle(color: SGColors.textMuted)))
                           : ListView.builder(
                               padding: const EdgeInsets.all(12),
                               itemCount: _players.length,
@@ -566,9 +583,9 @@ class _TeamBuilderScreenState extends State<TeamBuilderScreen> {
                               Container(
                                 padding: const EdgeInsets.all(16),
                                 decoration: BoxDecoration(
-                                  color: const Color(0xFF00E5A8).withOpacity(0.06),
+                                  color: const Color(0xFF00E5A8).withValues(alpha: 0.06),
                                   borderRadius: BorderRadius.circular(16),
-                                  border: Border.all(color: const Color(0xFF00E5A8).withOpacity(0.2)),
+                                  border: Border.all(color: const Color(0xFF00E5A8).withValues(alpha: 0.2)),
                                 ),
                                 child: Column(
                                   children: [
@@ -577,7 +594,7 @@ class _TeamBuilderScreenState extends State<TeamBuilderScreen> {
                                     const Text('Team Locked In!',
                                         style: TextStyle(fontSize: 18, fontWeight: FontWeight.w900, color: SGColors.textPrimary)),
                                     const SizedBox(height: 4),
-                                    Text('Now join a contest to compete',
+                                    const Text('Now join a contest to compete',
                                         style: TextStyle(fontSize: 13, color: SGColors.textMuted)),
                                     const SizedBox(height: 16),
                                     Row(
@@ -638,9 +655,9 @@ class _TeamBuilderScreenState extends State<TeamBuilderScreen> {
       child: Padding(
         padding: const EdgeInsets.all(32),
         child: Column(mainAxisSize: MainAxisSize.min, children: [
-          Icon(Icons.cloud_off_rounded, size: 48, color: SGColors.textMuted),
+          const Icon(Icons.cloud_off_rounded, size: 48, color: SGColors.textMuted),
           const SizedBox(height: 16),
-          Text(_error!, style: TextStyle(color: SGColors.textMuted, fontSize: 14), textAlign: TextAlign.center),
+          Text(_error!, style: const TextStyle(color: SGColors.textMuted, fontSize: 14), textAlign: TextAlign.center),
           const SizedBox(height: 16),
           FilledButton.icon(
             onPressed: _loadAll,
@@ -673,17 +690,17 @@ class _TeamBuilderScreenState extends State<TeamBuilderScreen> {
     return Container(
       margin: const EdgeInsets.only(bottom: 8),
       decoration: BoxDecoration(
-        color: selected ? const Color(0xFF00E5A8).withOpacity(0.06) : SGColors.card,
+        color: selected ? const Color(0xFF00E5A8).withValues(alpha: 0.06) : SGColors.card,
         borderRadius: BorderRadius.circular(14),
         border: Border.all(
-          color: selected ? const Color(0xFF00E5A8).withOpacity(0.3) : Colors.white.withOpacity(0.06),
+          color: selected ? const Color(0xFF00E5A8).withValues(alpha: 0.3) : Colors.white.withValues(alpha: 0.06),
         ),
       ),
       child: ListTile(
         onTap: _matchStarted ? null : () => _togglePlayer(player),
         leading: CircleAvatar(
           radius: 18,
-          backgroundColor: _roleColor(role).withOpacity(0.15),
+          backgroundColor: _roleColor(role).withValues(alpha: 0.15),
           child: Text(
             _roleShort(role),
             style: TextStyle(fontSize: 11, fontWeight: FontWeight.w800, color: _roleColor(role)),
@@ -714,7 +731,7 @@ class _TeamBuilderScreenState extends State<TeamBuilderScreen> {
         ),
         subtitle: Row(
           children: [
-            Expanded(child: Text('$team  ·  $cost pts', style: TextStyle(fontSize: 11, color: SGColors.textMuted))),
+            Expanded(child: Text('$team  ·  $cost pts', style: const TextStyle(fontSize: 11, color: SGColors.textMuted))),
             if (ptsLabel.isNotEmpty)
               Text(
                 ptsLabel,
@@ -727,7 +744,7 @@ class _TeamBuilderScreenState extends State<TeamBuilderScreen> {
           ],
         ),
         trailing: !_matchStarted && !selected
-            ? Icon(Icons.add_circle_outline, color: SGColors.textMuted, size: 22)
+            ? const Icon(Icons.add_circle_outline, color: SGColors.textMuted, size: 22)
             : !_matchStarted && selected
                 ? Row(mainAxisSize: MainAxisSize.min, children: [
                     _capButton('C', isCap, () => setState(() => _captain = isCap ? null : id)),

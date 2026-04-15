@@ -151,18 +151,18 @@ class _ChatScreenState extends State<ChatScreen> {
           padding: EdgeInsets.fromLTRB(16, 8, 8, MediaQuery.of(context).padding.bottom + 8),
           decoration: BoxDecoration(
             color: SGColors.card,
-            border: Border(top: BorderSide(color: Colors.white.withOpacity(0.06))),
+            border: Border(top: BorderSide(color: Colors.white.withValues(alpha: 0.06))),
           ),
           child: Row(children: [
             Expanded(
               child: TextField(
                 controller: _ctrl,
                 style: const TextStyle(color: Colors.white, fontSize: 14),
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   hintText: 'Ask about cricket...',
                   hintStyle: TextStyle(color: SGColors.textMuted),
                   border: InputBorder.none,
-                  contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                  contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 10),
                 ),
                 onSubmitted: _send,
               ),
@@ -194,7 +194,7 @@ class _ChatScreenState extends State<ChatScreen> {
           const SizedBox(height: 20),
           const Text('SportsGPT', style: TextStyle(fontSize: 22, fontWeight: FontWeight.w800, color: SGColors.textPrimary)),
           const SizedBox(height: 6),
-          Text('Your AI cricket assistant', style: TextStyle(fontSize: 13, color: SGColors.textMuted)),
+          const Text('Your AI cricket assistant', style: TextStyle(fontSize: 13, color: SGColors.textMuted)),
           const SizedBox(height: 28),
           ..._starters.map((s) => Padding(
             padding: const EdgeInsets.only(bottom: 8),
@@ -204,11 +204,11 @@ class _ChatScreenState extends State<ChatScreen> {
                 width: double.infinity,
                 padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                 decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.04),
+                  color: Colors.white.withValues(alpha: 0.04),
                   borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: Colors.white.withOpacity(0.08)),
+                  border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
                 ),
-                child: Text(s, style: TextStyle(fontSize: 13, color: SGColors.textSecondary)),
+                child: Text(s, style: const TextStyle(fontSize: 13, color: SGColors.textSecondary)),
               ),
             ),
           )),
@@ -225,14 +225,14 @@ class _ChatScreenState extends State<ChatScreen> {
         margin: const EdgeInsets.only(bottom: 10),
         padding: const EdgeInsets.all(14),
         decoration: BoxDecoration(
-          color: msg.isUser ? const Color(0xFF00E5A8).withOpacity(0.12) : SGColors.card,
+          color: msg.isUser ? const Color(0xFF00E5A8).withValues(alpha: 0.12) : SGColors.card,
           borderRadius: BorderRadius.circular(16).copyWith(
             bottomRight: msg.isUser ? const Radius.circular(4) : null,
             bottomLeft: !msg.isUser ? const Radius.circular(4) : null,
           ),
           border: Border.all(color: msg.isUser
-              ? const Color(0xFF00E5A8).withOpacity(0.2)
-              : Colors.white.withOpacity(0.06)),
+              ? const Color(0xFF00E5A8).withValues(alpha: 0.2)
+              : Colors.white.withValues(alpha: 0.06)),
         ),
         child: msg.isUser
             ? Text(msg.text, style: const TextStyle(fontSize: 14, color: SGColors.textPrimary))
@@ -243,7 +243,7 @@ class _ChatScreenState extends State<ChatScreen> {
                   strong: const TextStyle(fontWeight: FontWeight.w700, color: SGColors.textPrimary),
                   code: TextStyle(
                     fontSize: 12, color: const Color(0xFF00E5A8),
-                    backgroundColor: Colors.white.withOpacity(0.06),
+                    backgroundColor: Colors.white.withValues(alpha: 0.06),
                   ),
                 ),
               ),
@@ -260,12 +260,12 @@ class _ChatScreenState extends State<ChatScreen> {
         decoration: BoxDecoration(
           color: SGColors.card,
           borderRadius: BorderRadius.circular(16).copyWith(bottomLeft: const Radius.circular(4)),
-          border: Border.all(color: Colors.white.withOpacity(0.06)),
+          border: Border.all(color: Colors.white.withValues(alpha: 0.06)),
         ),
         child: Row(mainAxisSize: MainAxisSize.min, children: [
           for (var i = 0; i < 3; i++) ...[
             Container(width: 7, height: 7, decoration: BoxDecoration(
-              color: SGColors.textMuted.withOpacity(0.5), shape: BoxShape.circle)),
+              color: SGColors.textMuted.withValues(alpha: 0.5), shape: BoxShape.circle)),
             if (i < 2) const SizedBox(width: 4),
           ],
         ]),

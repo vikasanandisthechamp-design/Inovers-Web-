@@ -319,7 +319,7 @@ class _ShimmerLoading extends StatelessWidget {
     width: double.infinity,
     height: height,
     decoration: BoxDecoration(
-      color: Colors.white.withOpacity(0.04),
+      color: Colors.white.withValues(alpha: 0.04),
       borderRadius: BorderRadius.circular(16),
     ),
   );
@@ -336,7 +336,7 @@ class _EmptyTab extends StatelessWidget {
       child: Column(mainAxisSize: MainAxisSize.min, children: [
         Icon(icon, size: 48, color: SGColors.textMuted),
         const SizedBox(height: 16),
-        Text(message, style: TextStyle(color: SGColors.textMuted, fontSize: 14), textAlign: TextAlign.center),
+        Text(message, style: const TextStyle(color: SGColors.textMuted, fontSize: 14), textAlign: TextAlign.center),
       ]),
     ),
   );
@@ -359,7 +359,7 @@ class _ErrorView extends StatelessWidget {
           const Text('Could not load match', style: TextStyle(
             color: SGColors.textPrimary, fontSize: 16, fontWeight: FontWeight.w600)),
           const SizedBox(height: 8),
-          Text('Check your internet connection and try again.',
+          const Text('Check your internet connection and try again.',
             style: TextStyle(color: SGColors.textMuted, fontSize: 13), textAlign: TextAlign.center),
           const SizedBox(height: 20),
           FilledButton.icon(

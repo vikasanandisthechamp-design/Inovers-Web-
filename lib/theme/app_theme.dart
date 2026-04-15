@@ -25,10 +25,9 @@ class AppTheme {
   static ThemeData get dark => ThemeData(
     brightness:   Brightness.dark,
     useMaterial3: true,
-    colorScheme:  ColorScheme.dark(
+    colorScheme:  const ColorScheme.dark(
       primary:    SGColors.primary,
       surface:    SGColors.surface,
-      background: SGColors.bg,
     ),
     scaffoldBackgroundColor: SGColors.bg,
     cardTheme: CardTheme(
@@ -36,7 +35,7 @@ class AppTheme {
       elevation:   0,
       shape:       RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(16),
-        side: BorderSide(color: Colors.white.withOpacity(0.08), width: 1),
+        side: BorderSide(color: Colors.white.withValues(alpha: 0.08), width: 1),
       ),
       margin: EdgeInsets.zero,
     ),
@@ -61,14 +60,14 @@ class AppTheme {
       bodyMedium:    TextStyle(color: SGColors.textSecondary),
       bodySmall:     TextStyle(color: SGColors.textMuted,   fontSize: 12),
     ),
-    tabBarTheme: TabBarTheme(
+    tabBarTheme: const TabBarTheme(
       labelColor:        SGColors.textPrimary,
       unselectedLabelColor: SGColors.textMuted,
       indicatorColor:    SGColors.primary,
       indicatorSize:     TabBarIndicatorSize.tab,
     ),
     dividerTheme: DividerThemeData(
-      color:     Colors.white.withOpacity(0.08),
+      color:     Colors.white.withValues(alpha: 0.08),
       thickness: 1,
       space:     1,
     ),
@@ -112,10 +111,15 @@ class BallBadge extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Color bg = SGColors.textMuted;
-    if (label == 'W')       bg = SGColors.wicket;
-    else if (label == '6')  bg = SGColors.six;
-    else if (label == '4')  bg = SGColors.boundary;
-    else if (label == 'WD' || label == 'NB') bg = SGColors.warn;
+    if (label == 'W') {
+      bg = SGColors.wicket;
+    } else if (label == '6') {
+      bg = SGColors.six;
+    } else if (label == '4') {
+      bg = SGColors.boundary;
+    } else if (label == 'WD' || label == 'NB') {
+      bg = SGColors.warn;
+    }
 
     return Container(
       width: 32, height: 32,

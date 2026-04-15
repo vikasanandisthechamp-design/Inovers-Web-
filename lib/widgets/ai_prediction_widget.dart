@@ -35,7 +35,7 @@ class AIPredictionWidget extends StatelessWidget {
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                       decoration: BoxDecoration(
-                        color:        Colors.purple.withOpacity(0.15),
+                        color:        Colors.purple.withValues(alpha: 0.15),
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: const Text('Powered by Claude',
@@ -127,7 +127,7 @@ class AIPredictionWidget extends StatelessWidget {
                       width: 8, height: 8,
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
-                        color: i < prediction.confidence ? SGColors.good : Colors.white.withOpacity(0.12),
+                        color: i < prediction.confidence ? SGColors.good : Colors.white.withValues(alpha: 0.12),
                       ),
                     ),
                   )),
@@ -210,7 +210,7 @@ class _MomentumChip extends StatelessWidget {
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
           decoration: BoxDecoration(
-            color:        color.withOpacity(0.15),
+            color:        color.withValues(alpha: 0.15),
             borderRadius: BorderRadius.circular(20),
           ),
           child: Text(arrow, style: TextStyle(color: color, fontSize: 11, fontWeight: FontWeight.w700)),

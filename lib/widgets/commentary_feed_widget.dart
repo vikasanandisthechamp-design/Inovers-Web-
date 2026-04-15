@@ -59,7 +59,7 @@ class _BallTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: isLatest ? SGColors.good.withOpacity(0.05) : Colors.transparent,
+      color: isLatest ? SGColors.good.withValues(alpha: 0.05) : Colors.transparent,
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,

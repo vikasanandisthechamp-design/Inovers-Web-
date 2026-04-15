@@ -77,29 +77,32 @@ class _PartnerScreenState extends State<PartnerScreen> with SingleTickerProvider
     final token = context.read<AuthProvider>().accessToken;
     _service = ContestService(token: token);
 
+    String? successMsg;
+    String? errorMsg;
+
     try {
       final result = await _service!.applyPartner();
-
       if (result['ok'] == true) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Partner application submitted! 🎉'),
-            backgroundColor: Color(0xFF00E5A8),
-          ),
-        );
+        successMsg = 'Partner application submitted! 🎉';
         await _loadPartnerData();
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(result['error'] ?? 'Failed to apply')),
-        );
+        errorMsg = result['error'] as String? ?? 'Failed to apply';
       }
     } catch (_) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Network error. Try again.')),
-      );
+      errorMsg = 'Network error. Try again.';
     }
 
-    if (mounted) setState(() => _applying = false);
+    if (!mounted) return;
+    setState(() => _applying = false);
+
+    if (successMsg != null) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text(successMsg),
+        backgroundColor: const Color(0xFF00E5A8),
+      ));
+    } else if (errorMsg != null) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(errorMsg)));
+    }
   }
 
   @override
@@ -133,24 +136,24 @@ class _PartnerScreenState extends State<PartnerScreen> with SingleTickerProvider
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 colors: [
-                  const Color(0xFF6366F1).withOpacity(0.15),
-                  const Color(0xFF8B5CF6).withOpacity(0.08),
+                  const Color(0xFF6366F1).withValues(alpha: 0.15),
+                  const Color(0xFF8B5CF6).withValues(alpha: 0.08),
                 ],
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
               ),
               borderRadius: BorderRadius.circular(20),
-              border: Border.all(color: const Color(0xFF6366F1).withOpacity(0.2)),
+              border: Border.all(color: const Color(0xFF6366F1).withValues(alpha: 0.2)),
             ),
-            child: Column(
+            child: const Column(
               children: [
-                const Icon(Icons.rocket_launch_rounded, size: 48, color: Color(0xFF8B5CF6)),
-                const SizedBox(height: 16),
-                const Text(
+                Icon(Icons.rocket_launch_rounded, size: 48, color: Color(0xFF8B5CF6)),
+                SizedBox(height: 16),
+                Text(
                   'Become a Partner',
                   style: TextStyle(fontSize: 24, fontWeight: FontWeight.w900, color: SGColors.textPrimary),
                 ),
-                const SizedBox(height: 8),
+                SizedBox(height: 8),
                 Text(
                   'Create private contests, earn from every entry, and grow your cricket community.',
                   style: TextStyle(fontSize: 14, color: SGColors.textMuted, height: 1.5),
@@ -178,14 +181,14 @@ class _PartnerScreenState extends State<PartnerScreen> with SingleTickerProvider
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: const Color(0xFFFFA500).withOpacity(0.06),
+              color: const Color(0xFFFFA500).withValues(alpha: 0.06),
               borderRadius: BorderRadius.circular(14),
-              border: Border.all(color: const Color(0xFFFFA500).withOpacity(0.15)),
+              border: Border.all(color: const Color(0xFFFFA500).withValues(alpha: 0.15)),
             ),
-            child: Column(
+            child: const Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Row(
+                Row(
                   children: [
                     Icon(Icons.info_outline_rounded, size: 18, color: Color(0xFFFFA500)),
                     SizedBox(width: 8),
@@ -193,7 +196,7 @@ class _PartnerScreenState extends State<PartnerScreen> with SingleTickerProvider
                         style: TextStyle(fontSize: 14, fontWeight: FontWeight.w700, color: Color(0xFFFFA500))),
                   ],
                 ),
-                const SizedBox(height: 8),
+                SizedBox(height: 8),
                 Text(
                   'Refer 49 users to activate your partner account. Once active, you can create private contests and earn commissions.',
                   style: TextStyle(fontSize: 13, color: SGColors.textMuted, height: 1.5),
@@ -234,7 +237,7 @@ class _PartnerScreenState extends State<PartnerScreen> with SingleTickerProvider
       decoration: BoxDecoration(
         color: SGColors.card,
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: Colors.white.withOpacity(0.06)),
+        border: Border.all(color: Colors.white.withValues(alpha: 0.06)),
       ),
       child: Row(
         children: [
@@ -242,7 +245,7 @@ class _PartnerScreenState extends State<PartnerScreen> with SingleTickerProvider
             width: 42,
             height: 42,
             decoration: BoxDecoration(
-              color: const Color(0xFF00E5A8).withOpacity(0.1),
+              color: const Color(0xFF00E5A8).withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(12),
             ),
             child: Icon(icon, size: 22, color: const Color(0xFF00E5A8)),
@@ -254,7 +257,7 @@ class _PartnerScreenState extends State<PartnerScreen> with SingleTickerProvider
               children: [
                 Text(title, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w700, color: SGColors.textPrimary)),
                 const SizedBox(height: 2),
-                Text(desc, style: TextStyle(fontSize: 12, color: SGColors.textMuted)),
+                Text(desc, style: const TextStyle(fontSize: 12, color: SGColors.textMuted)),
               ],
             ),
           ),
@@ -275,8 +278,8 @@ class _PartnerScreenState extends State<PartnerScreen> with SingleTickerProvider
           width: double.infinity,
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
           color: p.isActive
-              ? const Color(0xFF00E5A8).withOpacity(0.08)
-              : const Color(0xFFFFA500).withOpacity(0.08),
+              ? const Color(0xFF00E5A8).withValues(alpha: 0.08)
+              : const Color(0xFFFFA500).withValues(alpha: 0.08),
           child: Row(
             children: [
               Icon(
@@ -307,7 +310,7 @@ class _PartnerScreenState extends State<PartnerScreen> with SingleTickerProvider
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text('Activation Progress', style: TextStyle(fontSize: 12, color: SGColors.textMuted)),
+                    const Text('Activation Progress', style: TextStyle(fontSize: 12, color: SGColors.textMuted)),
                     Text('${p.totalReferrals}/49', style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w700, color: SGColors.textPrimary)),
                   ],
                 ),
@@ -316,7 +319,7 @@ class _PartnerScreenState extends State<PartnerScreen> with SingleTickerProvider
                   borderRadius: BorderRadius.circular(6),
                   child: LinearProgressIndicator(
                     value: p.totalReferrals / 49,
-                    backgroundColor: Colors.white.withOpacity(0.08),
+                    backgroundColor: Colors.white.withValues(alpha: 0.08),
                     valueColor: const AlwaysStoppedAnimation(Color(0xFF8B5CF6)),
                     minHeight: 8,
                   ),
@@ -333,7 +336,7 @@ class _PartnerScreenState extends State<PartnerScreen> with SingleTickerProvider
             decoration: BoxDecoration(
               color: SGColors.card,
               borderRadius: BorderRadius.circular(14),
-              border: Border.all(color: Colors.white.withOpacity(0.06)),
+              border: Border.all(color: Colors.white.withValues(alpha: 0.06)),
             ),
             child: Row(
               children: [
@@ -341,7 +344,7 @@ class _PartnerScreenState extends State<PartnerScreen> with SingleTickerProvider
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text('Your Referral Code', style: TextStyle(fontSize: 11, color: SGColors.textMuted)),
+                      const Text('Your Referral Code', style: TextStyle(fontSize: 11, color: SGColors.textMuted)),
                       const SizedBox(height: 4),
                       Text(p.refCode, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w900, color: Color(0xFF8B5CF6), letterSpacing: 2)),
                     ],
@@ -440,7 +443,7 @@ class _PartnerScreenState extends State<PartnerScreen> with SingleTickerProvider
         decoration: BoxDecoration(
           color: SGColors.card,
           borderRadius: BorderRadius.circular(14),
-          border: Border.all(color: Colors.white.withOpacity(0.06)),
+          border: Border.all(color: Colors.white.withValues(alpha: 0.06)),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -449,7 +452,7 @@ class _PartnerScreenState extends State<PartnerScreen> with SingleTickerProvider
             const SizedBox(height: 10),
             Text(value, style: TextStyle(fontSize: 22, fontWeight: FontWeight.w900, color: color)),
             const SizedBox(height: 2),
-            Text(label, style: TextStyle(fontSize: 11, color: SGColors.textMuted)),
+            Text(label, style: const TextStyle(fontSize: 11, color: SGColors.textMuted)),
           ],
         ),
       ),
@@ -464,11 +467,11 @@ class _PartnerScreenState extends State<PartnerScreen> with SingleTickerProvider
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(Icons.account_balance_wallet_rounded, size: 48, color: SGColors.textMuted.withOpacity(0.3)),
+            Icon(Icons.account_balance_wallet_rounded, size: 48, color: SGColors.textMuted.withValues(alpha: 0.3)),
             const SizedBox(height: 12),
-            Text('No earnings yet', style: TextStyle(fontSize: 14, color: SGColors.textMuted)),
+            const Text('No earnings yet', style: TextStyle(fontSize: 14, color: SGColors.textMuted)),
             const SizedBox(height: 4),
-            Text('Create private contests to start earning!', style: TextStyle(fontSize: 12, color: SGColors.textMuted.withOpacity(0.6))),
+            Text('Create private contests to start earning!', style: TextStyle(fontSize: 12, color: SGColors.textMuted.withValues(alpha: 0.6))),
           ],
         ),
       );
@@ -485,7 +488,7 @@ class _PartnerScreenState extends State<PartnerScreen> with SingleTickerProvider
           decoration: BoxDecoration(
             color: SGColors.card,
             borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: Colors.white.withOpacity(0.06)),
+            border: Border.all(color: Colors.white.withValues(alpha: 0.06)),
           ),
           child: Row(
             children: [
@@ -493,7 +496,7 @@ class _PartnerScreenState extends State<PartnerScreen> with SingleTickerProvider
                 width: 36,
                 height: 36,
                 decoration: BoxDecoration(
-                  color: const Color(0xFFFFD700).withOpacity(0.1),
+                  color: const Color(0xFFFFD700).withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: const Icon(Icons.monetization_on_rounded, size: 18, color: Color(0xFFFFD700)),
@@ -505,7 +508,7 @@ class _PartnerScreenState extends State<PartnerScreen> with SingleTickerProvider
                   children: [
                     Text(e.source, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w700, color: SGColors.textPrimary)),
                     if (e.description.isNotEmpty)
-                      Text(e.description, style: TextStyle(fontSize: 11, color: SGColors.textMuted)),
+                      Text(e.description, style: const TextStyle(fontSize: 11, color: SGColors.textMuted)),
                   ],
                 ),
               ),
@@ -528,11 +531,11 @@ class _PartnerScreenState extends State<PartnerScreen> with SingleTickerProvider
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(Icons.people_outline_rounded, size: 48, color: SGColors.textMuted.withOpacity(0.3)),
+            Icon(Icons.people_outline_rounded, size: 48, color: SGColors.textMuted.withValues(alpha: 0.3)),
             const SizedBox(height: 12),
-            Text('No referrals yet', style: TextStyle(fontSize: 14, color: SGColors.textMuted)),
+            const Text('No referrals yet', style: TextStyle(fontSize: 14, color: SGColors.textMuted)),
             const SizedBox(height: 4),
-            Text('Share your referral link to get started!', style: TextStyle(fontSize: 12, color: SGColors.textMuted.withOpacity(0.6))),
+            Text('Share your referral link to get started!', style: TextStyle(fontSize: 12, color: SGColors.textMuted.withValues(alpha: 0.6))),
           ],
         ),
       );
@@ -552,13 +555,13 @@ class _PartnerScreenState extends State<PartnerScreen> with SingleTickerProvider
           decoration: BoxDecoration(
             color: SGColors.card,
             borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: Colors.white.withOpacity(0.06)),
+            border: Border.all(color: Colors.white.withValues(alpha: 0.06)),
           ),
           child: Row(
             children: [
               CircleAvatar(
                 radius: 18,
-                backgroundColor: const Color(0xFF6366F1).withOpacity(0.15),
+                backgroundColor: const Color(0xFF6366F1).withValues(alpha: 0.15),
                 child: Text(
                   name.toString().isNotEmpty ? name.toString()[0].toUpperCase() : '?',
                   style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w800, color: Color(0xFF6366F1)),
@@ -571,7 +574,7 @@ class _PartnerScreenState extends State<PartnerScreen> with SingleTickerProvider
                   children: [
                     Text(name.toString(), style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: SGColors.textPrimary)),
                     if (date.isNotEmpty)
-                      Text(date, style: TextStyle(fontSize: 11, color: SGColors.textMuted)),
+                      Text(date, style: const TextStyle(fontSize: 11, color: SGColors.textMuted)),
                   ],
                 ),
               ),
@@ -592,9 +595,9 @@ class _PartnerScreenState extends State<PartnerScreen> with SingleTickerProvider
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(Icons.cloud_off_rounded, size: 48, color: SGColors.textMuted),
+            const Icon(Icons.cloud_off_rounded, size: 48, color: SGColors.textMuted),
             const SizedBox(height: 16),
-            Text(_error!, style: TextStyle(color: SGColors.textMuted, fontSize: 14), textAlign: TextAlign.center),
+            Text(_error!, style: const TextStyle(color: SGColors.textMuted, fontSize: 14), textAlign: TextAlign.center),
             const SizedBox(height: 16),
             FilledButton.icon(
               onPressed: _loadPartnerData,

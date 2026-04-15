@@ -158,12 +158,12 @@ class _ContestsScreenState extends State<ContestsScreen>
                       fontWeight: FontWeight.w800,
                       color: SGColors.textPrimary)),
               const SizedBox(height: 4),
-              Text('Invite friends to compete in your exclusive contest',
+              const Text('Invite friends to compete in your exclusive contest',
                   style: TextStyle(fontSize: 13, color: SGColors.textMuted)),
               const SizedBox(height: 20),
 
               // Title
-              Text('GAME TITLE (optional)',
+              const Text('GAME TITLE (optional)',
                   style: TextStyle(
                       fontSize: 11,
                       fontWeight: FontWeight.w600,
@@ -175,23 +175,23 @@ class _ContestsScreenState extends State<ContestsScreen>
                 style: const TextStyle(color: SGColors.textPrimary),
                 decoration: InputDecoration(
                   hintText: 'My Cricket Squad Challenge',
-                  hintStyle: TextStyle(color: SGColors.textMuted),
+                  hintStyle: const TextStyle(color: SGColors.textMuted),
                   filled: true,
                   fillColor: SGColors.bg,
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
-                    borderSide: BorderSide(color: Colors.white12),
+                    borderSide: const BorderSide(color: Colors.white12),
                   ),
                   enabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
-                    borderSide: BorderSide(color: Colors.white12),
+                    borderSide: const BorderSide(color: Colors.white12),
                   ),
                 ),
               ),
               const SizedBox(height: 16),
 
               // Entry fee
-              Text('ENTRY FEE (SG Points, 0 = free)',
+              const Text('ENTRY FEE (SG Points, 0 = free)',
                   style: TextStyle(
                       fontSize: 11,
                       fontWeight: FontWeight.w600,
@@ -204,23 +204,23 @@ class _ContestsScreenState extends State<ContestsScreen>
                 onChanged: (v) => entryFee = int.tryParse(v) ?? 0,
                 decoration: InputDecoration(
                   hintText: '0',
-                  hintStyle: TextStyle(color: SGColors.textMuted),
+                  hintStyle: const TextStyle(color: SGColors.textMuted),
                   filled: true,
                   fillColor: SGColors.bg,
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
-                    borderSide: BorderSide(color: Colors.white12),
+                    borderSide: const BorderSide(color: Colors.white12),
                   ),
                   enabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
-                    borderSide: BorderSide(color: Colors.white12),
+                    borderSide: const BorderSide(color: Colors.white12),
                   ),
                 ),
               ),
               const SizedBox(height: 16),
 
               // Max players
-              Text('MAX PLAYERS',
+              const Text('MAX PLAYERS',
                   style: TextStyle(
                       fontSize: 11,
                       fontWeight: FontWeight.w600,
@@ -433,20 +433,20 @@ class _ContestsScreenState extends State<ContestsScreen>
                       color: SGColors.textPrimary,
                       fontFamily: 'monospace',
                       letterSpacing: 2),
-                  decoration: InputDecoration(
+                  decoration: const InputDecoration(
                     hintText: 'CODE',
                     hintStyle: TextStyle(color: SGColors.textMuted),
                     filled: true,
                     fillColor: SGColors.bg,
-                    contentPadding: const EdgeInsets.symmetric(
+                    contentPadding: EdgeInsets.symmetric(
                         horizontal: 12, vertical: 14),
                     border: OutlineInputBorder(
-                      borderRadius: const BorderRadius.horizontal(
+                      borderRadius: BorderRadius.horizontal(
                           left: Radius.circular(12)),
                       borderSide: BorderSide(color: Colors.white12),
                     ),
                     enabledBorder: OutlineInputBorder(
-                      borderRadius: const BorderRadius.horizontal(
+                      borderRadius: BorderRadius.horizontal(
                           left: Radius.circular(12)),
                       borderSide: BorderSide(color: Colors.white12),
                     ),
@@ -513,7 +513,7 @@ class _ContestsScreenState extends State<ContestsScreen>
                 fontWeight: FontWeight.w800,
                 color: SGColors.textPrimary)),
         const SizedBox(height: 4),
-        Text('Share the invite code with friends',
+        const Text('Share the invite code with friends',
             style: TextStyle(fontSize: 13, color: SGColors.textMuted)),
         const SizedBox(height: 16),
 
@@ -526,7 +526,7 @@ class _ContestsScreenState extends State<ContestsScreen>
             border: Border.all(color: Colors.white12),
           ),
           child: Column(children: [
-            Text('INVITE CODE',
+            const Text('INVITE CODE',
                 style: TextStyle(
                     fontSize: 10,
                     fontWeight: FontWeight.w600,
@@ -612,7 +612,7 @@ class _ContestsScreenState extends State<ContestsScreen>
               borderRadius: BorderRadius.circular(12),
               border: Border.all(color: const Color(0xFF22C55E).withValues(alpha: 0.15)),
             ),
-            child: Text(
+            child: const Text(
               'Points-only game. No real money involved. All prizes are virtual SG Points. Play responsibly!',
               textAlign: TextAlign.center,
               style: TextStyle(fontSize: 11, color: SGColors.textMuted, height: 1.5),
@@ -812,7 +812,7 @@ class _ContestsScreenState extends State<ContestsScreen>
   Widget _statCol(String label, String value, {bool alert = false}) {
     return Column(children: [
       Text(label,
-          style: TextStyle(
+          style: const TextStyle(
               fontSize: 9,
               fontWeight: FontWeight.w600,
               color: SGColors.textMuted,
@@ -835,7 +835,7 @@ class _ContestsScreenState extends State<ContestsScreen>
           const SizedBox(height: 12),
           Text(message,
               textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 14, color: SGColors.textMuted)),
+              style: const TextStyle(fontSize: 14, color: SGColors.textMuted)),
         ]),
       ),
     );
@@ -923,7 +923,7 @@ class _LeaderboardSheetState extends State<_LeaderboardSheet> {
                       maxLines: 1, overflow: TextOverflow.ellipsis),
                     if (widget.prizePool > 0)
                       Text('Prize pool: ${widget.prizePool} pts',
-                        style: TextStyle(color: accent, fontSize: 12)),
+                        style: const TextStyle(color: accent, fontSize: 12)),
                   ],
                 )),
                 IconButton(
@@ -936,8 +936,8 @@ class _LeaderboardSheetState extends State<_LeaderboardSheet> {
           ),
           const Divider(height: 1, color: Colors.white12),
           // Column headers
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+          const Padding(
+            padding: EdgeInsets.symmetric(horizontal: 20, vertical: 8),
             child: Row(
               children: [
                 SizedBox(width: 36,
@@ -957,16 +957,16 @@ class _LeaderboardSheetState extends State<_LeaderboardSheet> {
                 ? Center(child: Padding(
                     padding: const EdgeInsets.all(24),
                     child: Column(mainAxisSize: MainAxisSize.min, children: [
-                      Icon(Icons.cloud_off_rounded, color: SGColors.textMuted, size: 32),
+                      const Icon(Icons.cloud_off_rounded, color: SGColors.textMuted, size: 32),
                       const SizedBox(height: 12),
-                      Text(_error!, style: TextStyle(color: SGColors.textMuted, fontSize: 13)),
+                      Text(_error!, style: const TextStyle(color: SGColors.textMuted, fontSize: 13)),
                       const SizedBox(height: 12),
                       TextButton(onPressed: _load, child: const Text('Retry')),
                     ]),
                   ))
                 : _entries.isEmpty
-                  ? Center(child: Padding(
-                      padding: const EdgeInsets.all(32),
+                  ? const Center(child: Padding(
+                      padding: EdgeInsets.all(32),
                       child: Text('No entries yet',
                         style: TextStyle(color: SGColors.textMuted, fontSize: 14)),
                     ))
@@ -1028,14 +1028,14 @@ class _LeaderboardSheetState extends State<_LeaderboardSheet> {
                                             color: accent.withValues(alpha: 0.18),
                                             borderRadius: BorderRadius.circular(4),
                                           ),
-                                          child: Text('YOU', style: TextStyle(
+                                          child: const Text('YOU', style: TextStyle(
                                             color: accent, fontSize: 9, fontWeight: FontWeight.w800)),
                                         ),
                                       ],
                                     ]),
                                     if (team.isNotEmpty && team != name)
                                       Text(team,
-                                        style: TextStyle(color: SGColors.textMuted, fontSize: 11),
+                                        style: const TextStyle(color: SGColors.textMuted, fontSize: 11),
                                         maxLines: 1, overflow: TextOverflow.ellipsis),
                                   ],
                                 ),
@@ -1045,12 +1045,12 @@ class _LeaderboardSheetState extends State<_LeaderboardSheet> {
                                 crossAxisAlignment: CrossAxisAlignment.end,
                                 children: [
                                   Text('$pts',
-                                    style: TextStyle(
+                                    style: const TextStyle(
                                       color: SGColors.textPrimary,
                                       fontSize: 14, fontWeight: FontWeight.w700)),
                                   if (prize > 0)
                                     Text('+$prize pts',
-                                      style: TextStyle(color: SGColors.good, fontSize: 11)),
+                                      style: const TextStyle(color: SGColors.good, fontSize: 11)),
                                 ],
                               ),
                             ],
