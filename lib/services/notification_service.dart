@@ -1,7 +1,7 @@
-import 'dart:convert';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
+import '../router/app_router.dart';
 
 /// Handles Firebase Cloud Messaging push notifications.
 ///
@@ -80,16 +80,31 @@ class NotificationService {
   }
 
   /// Navigate to the right screen when user taps a notification.
+  /// Backend sends: { "type": "match_start"|"ball_event"|"fantasy_result", "match_id": "12345" }
   static void _handleTap(RemoteMessage message) {
-    final data = message.data;
-    final type = data['type'] as String?;
+    final data    = message.data;
+    final type    = data['type'] as String?;
     final matchId = data['match_id'] as String?;
 
     debugPrint('FCM tap: type=$type matchId=$matchId');
-    // The app router handles deep links via go_router.
-    // The backend sends: { "type": "match_start", "match_id": "12345" }
-    // NavKey.navigatorKey.currentContext?.go('/match/$matchId')
-    // TODO: wire up GlobalKey<NavigatorState> for navigation from outside widget tree
+
+    if (matchId == null || matchId.isEmpty) return;
+    final router = appRouter;
+    if (router == null) return;
+
+    switch (type) {
+      case 'match_start':
+      case 'ball_event':
+      case 'wicket':
+      case 'score_update':
+        router.go('/match/$matchId');
+      case 'fantasy_result':
+        router.go('/contests/$matchId');
+      case 'predict':
+        router.go('/predict/$matchId');
+      default:
+        router.go('/match/$matchId');
+    }
   }
 }
 

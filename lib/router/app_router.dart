@@ -12,9 +12,12 @@ import '../screens/legal/privacy_screen.dart';
 import '../screens/legal/terms_screen.dart';
 import '../screens/premium_screen.dart';
 
+/// Singleton router instance — usable from anywhere (e.g. notification taps).
+GoRouter? appRouter;
+
 /// Builds a [GoRouter] bound to [auth] so redirects fire on sign-in / sign-out.
 GoRouter buildRouter(AuthProvider auth) {
-  return GoRouter(
+  final router = GoRouter(
     debugLogDiagnostics: false,
     initialLocation: '/',
     refreshListenable: auth,
@@ -94,4 +97,6 @@ GoRouter buildRouter(AuthProvider auth) {
       GoRoute(path: '/terms',   builder: (_, __) => const TermsScreen()),
     ],
   );
+  appRouter = router;
+  return router;
 }
