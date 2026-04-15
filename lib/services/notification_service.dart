@@ -1,7 +1,15 @@
+import 'dart:convert';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
+import 'package:http/http.dart' as http;
+import 'package:supabase_flutter/supabase_flutter.dart';
 import '../router/app_router.dart';
+
+const _apiBase = String.fromEnvironment(
+  'API_BASE_URL',
+  defaultValue: 'https://sportgod-backend-production.up.railway.app',
+);
 
 /// Handles Firebase Cloud Messaging push notifications.
 ///
@@ -12,7 +20,8 @@ import '../router/app_router.dart';
 ///   3. Add iOS app (bundle ID: com.sportgod.app) → download GoogleService-Info.plist
 ///      → place at ios/Runner/GoogleService-Info.plist
 ///   4. Run: `flutterfire configure` (installs firebase_options.dart)
-///   5. In main.dart: add `await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform)`
+///      → This generates lib/firebase_options.dart with your project's config
+///   5. main.dart already initializes Firebase + Crashlytics + registers background handler
 ///   6. In Railway backend: set FIREBASE_PROJECT_ID + FIREBASE_SERVICE_ACCOUNT_JSON env vars
 ///
 /// Notification types we send:
@@ -61,11 +70,31 @@ class NotificationService {
 
   static String? get fcmToken => _fcmToken;
 
-  /// Upload FCM token to backend so it can send targeted notifications.
+  /// Upload FCM token to backend so it can send targeted push notifications.
+  /// Calls POST /api/v1/notifications/register-device (requires auth).
   static Future<void> _uploadToken(String token) async {
     try {
-      // TODO: replace with actual API call once backend /api/v1/notifications/register exists
-      debugPrint('FCM token ready to register: $token');
+      final session = Supabase.instance.client.auth.currentSession;
+      if (session == null) {
+        debugPrint('FCM token upload skipped — user not authenticated');
+        return;
+      }
+
+      final platform = defaultTargetPlatform == TargetPlatform.iOS ? 'ios' : 'android';
+      final res = await http.post(
+        Uri.parse('$_apiBase/api/v1/notifications/register-device'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ${session.accessToken}',
+        },
+        body: json.encode({'fcm_token': token, 'platform': platform}),
+      ).timeout(const Duration(seconds: 10));
+
+      if (res.statusCode == 200) {
+        debugPrint('FCM token registered successfully');
+      } else {
+        debugPrint('FCM token registration failed: ${res.statusCode}');
+      }
     } catch (e) {
       debugPrint('Token upload failed: $e');
     }
