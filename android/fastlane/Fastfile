@@ -1,11 +1,10 @@
 default_platform(:android)
 
 platform :android do
-  desc "Build and upload to Play Store internal testing"
+  desc "Upload pre-built AAB to Play Store internal testing"
+  # Note: the CI workflow already builds the AAB before calling this lane.
+  # This lane only handles the Play Console upload, not the build.
   lane :beta do
-    # Build AAB (Android App Bundle)
-    sh("cd ../.. && flutter build appbundle --release --dart-define=API_BASE_URL=https://sportgod-backend-production.up.railway.app")
-
     # Upload to Play Store internal testing
     upload_to_play_store(
       track: "internal",
