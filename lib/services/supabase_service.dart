@@ -19,7 +19,7 @@ class SupabaseService {
       anonKey: _supabaseAnonKey,
       // PKCE is required for OAuth on mobile — sends code verifier in the
       // redirect URL so Supabase can exchange it for a session on the callback.
-      authOptions: FlutterAuthClientOptions(
+      authOptions: const FlutterAuthClientOptions(
         authFlowType: AuthFlowType.pkce,
       ),
     );
