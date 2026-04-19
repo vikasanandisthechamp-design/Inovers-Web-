@@ -40,13 +40,37 @@ class ApiService {
     throw ApiException(-1, lastError?.toString() ?? 'Network error. Check your connection.');
   }
 
-  // ── Live matches ─────────────────────────────────────────────────
+  // ── Live + Upcoming matches (parallel fetch, deduped) ────────────
+  // Mirrors the web app's MatchDataContext: live endpoint wins on dedup
+  // so a match that just went live appears in real-time without a stale
+  // "Upcoming" entry shadowing it.
   Future<List<CricketMatch>> getLiveMatches() async {
-    final res = await _get('/api/v1/matches');
-    _assertOk(res);
-    final body = json.decode(res.body) as Map<String, dynamic>;
-    final data = (body['data'] ?? []) as List;
-    return data.map((m) => CricketMatch.fromJson(m as Map<String, dynamic>)).toList();
+    final results = await Future.wait([
+      _get('/api/v1/matches').catchError((_) => http.Response('{"data":[]}', 200)),
+      _get('/api/v1/matches/upcoming').catchError((_) => http.Response('{"data":[]}', 200)),
+    ]);
+
+    List<CricketMatch> parseBody(http.Response res) {
+      try {
+        final body = json.decode(res.body) as Map<String, dynamic>;
+        final data = (body['data'] ?? []) as List;
+        return data.map((m) => CricketMatch.fromJson(m as Map<String, dynamic>)).toList();
+      } catch (_) {
+        return [];
+      }
+    }
+
+    final live     = parseBody(results[0]);
+    final upcoming = parseBody(results[1]);
+
+    // Live endpoint wins: exclude any upcoming entry whose ID is already in live
+    final liveIds = {for (final m in live) m.id};
+    final deduped = [
+      ...live,
+      ...upcoming.where((m) => !liveIds.contains(m.id)),
+    ];
+
+    return deduped;
   }
 
   // ── Single match ─────────────────────────────────────────────────
