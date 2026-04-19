@@ -2,10 +2,13 @@ name: Flutter CI / CD
 
 # ──────────────────────────────────────────────────────────────────────────────
 # CI  (every PR + push to main) : analyze · test
-# CD  (push to main only)       : sign + build AAB → Play Console internal
-#                                  sign + build IPA → TestFlight
+#     → NEVER fails from missing signing secrets — just validates code quality.
 #
-# Required GitHub Secrets (Settings → Secrets → Actions):
+# CD  (manual workflow_dispatch only) : sign + build AAB → Play Console internal
+#                                        sign + build IPA → TestFlight
+#     → Run this manually when you want to publish a build.
+#
+# Required GitHub Secrets for CD (Settings → Secrets → Actions):
 #
 #  ANDROID
 #    ANDROID_KEYSTORE_BASE64        base64 < your-release.jks
@@ -28,6 +31,20 @@ on:
     branches: [main]
   push:
     branches: [main]
+  # CD jobs run ONLY when manually triggered — never on automatic push.
+  # This prevents failure emails from missing signing secrets.
+  workflow_dispatch:
+    inputs:
+      deploy_android:
+        description: 'Deploy to Play Console internal track'
+        required: false
+        default: 'false'
+        type: boolean
+      deploy_ios:
+        description: 'Deploy to TestFlight'
+        required: false
+        default: 'false'
+        type: boolean
 
 env:
   FLUTTER_VERSION: '3.29.3'
@@ -35,7 +52,7 @@ env:
   WEB_URL: 'https://sportgod.ai'
 
 jobs:
-  # ── 1. Analyze + Test (every PR and push) ───────────────────────────────────
+  # ── 1. Analyze + Test (every PR and push — no secrets needed) ───────────────
   analyze-and-test:
     name: Analyze & Test
     runs-on: ubuntu-latest
@@ -55,13 +72,15 @@ jobs:
         run: flutter analyze --no-fatal-infos
 
       - name: Run tests
-        run: flutter test
+        run: flutter test --reporter expanded
 
-  # ── 2. Android build + sign + upload (push to main only) ────────────────────
+  # ── 2. Android build + sign + upload (manual trigger only) ──────────────────
   deploy-android:
     name: Android → Play Console (internal)
     needs: analyze-and-test
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main' && secrets.ANDROID_KEYSTORE_BASE64 != ''
+    # ONLY on workflow_dispatch AND when deploy_android is explicitly set to true.
+    # This prevents any accidental run on push that would fail without signing keys.
+    if: github.event_name == 'workflow_dispatch' && inputs.deploy_android == 'true'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -107,11 +126,12 @@ jobs:
         env:
           GOOGLE_PLAY_SERVICE_ACCOUNT_JSON: ${{ secrets.GOOGLE_PLAY_SERVICE_ACCOUNT_JSON }}
 
-  # ── 3. iOS build + sign + upload (push to main only) ────────────────────────
+  # ── 3. iOS build + sign + upload (manual trigger only) ──────────────────────
   deploy-ios:
     name: iOS → TestFlight
     needs: analyze-and-test
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main' && secrets.IOS_CERT_BASE64 != ''
+    # ONLY on workflow_dispatch AND when deploy_ios is explicitly set to true.
+    if: github.event_name == 'workflow_dispatch' && inputs.deploy_ios == 'true'
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v4
