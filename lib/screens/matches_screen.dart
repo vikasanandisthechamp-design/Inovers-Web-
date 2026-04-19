@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import '../services/api_service.dart';
 import '../models/cricket_models.dart';
 import '../theme/app_theme.dart';
+import '../widgets/team_logo_widget.dart';
 
 class MatchesScreen extends StatefulWidget {
   const MatchesScreen({super.key});
@@ -196,9 +197,12 @@ class _MatchesScreenState extends State<MatchesScreen> with WidgetsBindingObserv
     final latest = runs.isNotEmpty ? runs.last : null;
     return Row(
       children: [
-        Text(team.short, style: const TextStyle(
-          fontSize: 15, fontWeight: FontWeight.w800, color: SGColors.textPrimary,
-        )),
+        TeamLogoWidget(short: team.short, name: team.name, imageUrl: team.imageUrl, size: 28),
+        const SizedBox(width: 8),
+        Text(team.short.isNotEmpty ? team.short : team.name,
+          style: const TextStyle(
+            fontSize: 14, fontWeight: FontWeight.w800, color: SGColors.textPrimary,
+          )),
         const Spacer(),
         if (latest != null)
           Text(latest.scoreString, style: const TextStyle(

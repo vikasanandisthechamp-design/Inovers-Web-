@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import '../models/cricket_models.dart';
 import '../services/api_service.dart';
 import '../theme/app_theme.dart';
+import '../widgets/team_logo_widget.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -160,20 +161,22 @@ class _MatchCard extends StatelessWidget {
           Row(
             children: [
               Expanded(child: _TeamBlock(
-                name:   match.teamHome.name,
-                short:  match.teamHome.short,
-                run:    latestHome,
-                align:  TextAlign.left,
+                team:  match.teamHome,
+                run:   latestHome,
+                align: CrossAxisAlignment.start,
               )),
-              const Padding(
-                padding: EdgeInsets.symmetric(horizontal: 12),
-                child: Text('vs', style: TextStyle(color: SGColors.textMuted, fontSize: 12, fontWeight: FontWeight.w700)),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 10),
+                child: Column(mainAxisSize: MainAxisSize.min, children: [
+                  const Text('vs', style: TextStyle(color: SGColors.textMuted, fontSize: 11, fontWeight: FontWeight.w700)),
+                  if (latestHome != null || latestAway != null)
+                    const SizedBox(height: 2),
+                ]),
               ),
               Expanded(child: _TeamBlock(
-                name:   match.teamAway.name,
-                short:  match.teamAway.short,
-                run:    latestAway,
-                align:  TextAlign.right,
+                team:  match.teamAway,
+                run:   latestAway,
+                align: CrossAxisAlignment.end,
               )),
             ],
           ),
@@ -190,30 +193,49 @@ class _MatchCard extends StatelessWidget {
 }
 
 class _TeamBlock extends StatelessWidget {
-  final String        name, short;
-  final InningsRun?   run;
-  final TextAlign     align;
-  const _TeamBlock({required this.name, required this.short, this.run, required this.align});
+  final Team            team;
+  final InningsRun?     run;
+  final CrossAxisAlignment align;
+  const _TeamBlock({required this.team, this.run, required this.align});
 
   @override
-  Widget build(BuildContext context) => Column(
-    crossAxisAlignment: align == TextAlign.left ? CrossAxisAlignment.start : CrossAxisAlignment.end,
-    children: [
-      Text(short.isNotEmpty ? short : name,
-        style: const TextStyle(color: SGColors.textPrimary, fontWeight: FontWeight.w600, fontSize: 14),
-        textAlign: align, overflow: TextOverflow.ellipsis),
-      if (run != null)
-        Text(
-          '${run!.scoreString}  (${run!.overs})',
-          textAlign: align,
-          style: const TextStyle(
-            color:    SGColors.textPrimary,
-            fontSize: 18, fontWeight: FontWeight.w800,
-            fontFeatures: [FontFeature.tabularFigures()],
-          ),
+  Widget build(BuildContext context) {
+    final isLeft = align == CrossAxisAlignment.start;
+    return Column(
+      crossAxisAlignment: align,
+      children: [
+        Row(
+          mainAxisAlignment: isLeft ? MainAxisAlignment.start : MainAxisAlignment.end,
+          children: [
+            if (isLeft) ...[
+              TeamLogoWidget(short: team.short, name: team.name, imageUrl: team.imageUrl, size: 32),
+              const SizedBox(width: 8),
+            ],
+            Flexible(child: Text(
+              team.short.isNotEmpty ? team.short : team.name,
+              style: const TextStyle(color: SGColors.textPrimary, fontWeight: FontWeight.w700, fontSize: 14),
+              overflow: TextOverflow.ellipsis,
+            )),
+            if (!isLeft) ...[
+              const SizedBox(width: 8),
+              TeamLogoWidget(short: team.short, name: team.name, imageUrl: team.imageUrl, size: 32),
+            ],
+          ],
         ),
-    ],
-  );
+        if (run != null) ...[
+          const SizedBox(height: 4),
+          Text(
+            '${run!.scoreString}  (${run!.overs})',
+            style: const TextStyle(
+              color: SGColors.textPrimary,
+              fontSize: 19, fontWeight: FontWeight.w900,
+              fontFeatures: [FontFeature.tabularFigures()],
+            ),
+          ),
+        ],
+      ],
+    );
+  }
 }
 
 class _StatusBadge extends StatelessWidget {
