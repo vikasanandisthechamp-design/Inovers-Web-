@@ -140,8 +140,8 @@ class _MatchCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final homeRuns = match.runsFor(match.teamHome.id);
-    final awayRuns = match.runsFor(match.teamAway.id);
+    final homeRuns  = match.homeRuns;
+    final awayRuns  = match.awayRuns;
     final latestHome = homeRuns.lastOrNull;
     final latestAway = awayRuns.lastOrNull;
 

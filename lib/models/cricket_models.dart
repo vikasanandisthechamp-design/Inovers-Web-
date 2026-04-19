@@ -94,8 +94,41 @@ class CricketMatch extends Equatable {
   bool get hasStarted => isLive || isFinished || status == 'Inning Break';
   bool get isUpcoming => !hasStarted;
 
-  List<InningsRun> runsFor(String teamId) =>
-      runs.where((r) => r.teamId == teamId).toList();
+  /// Returns innings runs for a team. Uses exact match first, then fuzzy
+  /// fallback for CricAPI mismatches (e.g. "rajasthan " vs "RR").
+  List<InningsRun> runsFor(String teamId) {
+    // 1. Exact match
+    final exact = runs.where((r) => r.teamId == teamId).toList();
+    if (exact.isNotEmpty) return exact;
+    // 2. Fuzzy: team name or short code appears in the stored teamId string
+    final team = teamId == teamHome.id ? teamHome : teamAway;
+    final nameLower  = team.name.toLowerCase();
+    final shortLower = team.short.toLowerCase();
+    final fuzzy = runs.where((r) {
+      final tid = r.teamId.trim().toLowerCase();
+      return nameLower.contains(tid) || tid.contains(shortLower);
+    }).toList();
+    return fuzzy;
+  }
+
+  /// Returns home runs, falling back to odd innings if neither team matches.
+  List<InningsRun> get homeRuns {
+    final r = runsFor(teamHome.id);
+    if (r.isNotEmpty) return r;
+    // If away also found nothing, assign by inning parity as last resort
+    final awayMatched = runsFor(teamAway.id);
+    if (awayMatched.isEmpty) return runs.where((r) => r.inning % 2 == 0).toList();
+    return [];
+  }
+
+  /// Returns away runs, falling back to odd innings if neither team matches.
+  List<InningsRun> get awayRuns {
+    final r = runsFor(teamAway.id);
+    if (r.isNotEmpty) return r;
+    final homeMatched = runsFor(teamHome.id);
+    if (homeMatched.isEmpty) return runs.where((r) => r.inning % 2 == 1).toList();
+    return [];
+  }
 
   factory CricketMatch.fromJson(Map<String, dynamic> j) {
     final venue = j['venue'] as Map<String, dynamic>? ?? {};

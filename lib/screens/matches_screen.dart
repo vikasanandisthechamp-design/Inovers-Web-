@@ -157,9 +157,9 @@ class _MatchesScreenState extends State<MatchesScreen> with WidgetsBindingObserv
           children: [
             Row(
               children: [
-                Expanded(child: _teamRow(m.teamHome, m.runsFor(m.teamHome.id))),
+                Expanded(child: _teamRow(m.teamHome, m.homeRuns)),
                 const SizedBox(width: 12),
-                Expanded(child: _teamRow(m.teamAway, m.runsFor(m.teamAway.id))),
+                Expanded(child: _teamRow(m.teamAway, m.awayRuns)),
               ],
             ),
             if (m.note.isNotEmpty) ...[
