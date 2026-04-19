@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../services/api_service.dart';
@@ -11,16 +12,41 @@ class GamesScreen extends StatefulWidget {
   State<GamesScreen> createState() => _GamesScreenState();
 }
 
-class _GamesScreenState extends State<GamesScreen> {
+class _GamesScreenState extends State<GamesScreen> with WidgetsBindingObserver {
   final _api = ApiService();
   List<CricketMatch> _matches = [];
-  bool _loading = true;
+  bool   _loading  = true;
+  bool   _silentRefreshing = false;
   String? _error;
+  Timer? _pollTimer;
+
+  static const _liveInterval  = Duration(seconds: 8);
+  static const _quietInterval = Duration(seconds: 30);
 
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     _load();
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    _pollTimer?.cancel();
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      _silentRefresh();
+      _schedulePoll();
+    } else if (state == AppLifecycleState.paused ||
+               state == AppLifecycleState.detached) {
+      _pollTimer?.cancel();
+      _pollTimer = null;
+    }
   }
 
   Future<void> _load() async {
@@ -31,6 +57,26 @@ class _GamesScreenState extends State<GamesScreen> {
       _error = 'Could not load matches. Check your connection.';
     }
     if (mounted) setState(() => _loading = false);
+    _schedulePoll();
+  }
+
+  Future<void> _silentRefresh() async {
+    if (_silentRefreshing) return;
+    _silentRefreshing = true;
+    try {
+      final matches = await _api.getLiveMatches();
+      if (mounted) setState(() => _matches = matches);
+    } catch (_) {}
+    _silentRefreshing = false;
+  }
+
+  void _schedulePoll() {
+    _pollTimer?.cancel();
+    final hasLive = _matches.any((m) => m.isLive);
+    _pollTimer = Timer.periodic(
+      hasLive ? _liveInterval : _quietInterval,
+      (_) => _silentRefresh(),
+    );
   }
 
   @override

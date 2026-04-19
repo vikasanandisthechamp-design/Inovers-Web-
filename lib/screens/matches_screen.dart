@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../services/api_service.dart';
@@ -11,15 +12,40 @@ class MatchesScreen extends StatefulWidget {
   State<MatchesScreen> createState() => _MatchesScreenState();
 }
 
-class _MatchesScreenState extends State<MatchesScreen> {
+class _MatchesScreenState extends State<MatchesScreen> with WidgetsBindingObserver {
   final _api = ApiService();
   List<CricketMatch> _matches = [];
-  bool _loading = true;
+  bool  _loading  = true;
+  bool  _silentRefreshing = false;
+  Timer? _pollTimer;
+
+  static const _liveInterval  = Duration(seconds: 8);
+  static const _quietInterval = Duration(seconds: 30);
 
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     _load();
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    _pollTimer?.cancel();
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      _silentRefresh();
+      _schedulePoll();
+    } else if (state == AppLifecycleState.paused ||
+               state == AppLifecycleState.detached) {
+      _pollTimer?.cancel();
+      _pollTimer = null;
+    }
   }
 
   Future<void> _load() async {
@@ -28,21 +54,50 @@ class _MatchesScreenState extends State<MatchesScreen> {
       _matches = await _api.getLiveMatches();
     } catch (_) {}
     if (mounted) setState(() => _loading = false);
+    _schedulePoll();
+  }
+
+  Future<void> _silentRefresh() async {
+    if (_silentRefreshing) return;
+    _silentRefreshing = true;
+    try {
+      final matches = await _api.getLiveMatches();
+      if (mounted) setState(() => _matches = matches);
+    } catch (_) {}
+    _silentRefreshing = false;
+  }
+
+  void _schedulePoll() {
+    _pollTimer?.cancel();
+    final hasLive = _matches.any((m) => m.isLive);
+    _pollTimer = Timer.periodic(
+      hasLive ? _liveInterval : _quietInterval,
+      (_) => _silentRefresh(),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-    final live = _matches.where((m) => m.isLive).toList();
+    final live  = _matches.where((m) => m.isLive).toList();
     final other = _matches.where((m) => !m.isLive).toList();
 
     return Scaffold(
       appBar: AppBar(
         title: const Text('Matches'),
         actions: [
-          IconButton(
-            icon: const Icon(Icons.refresh_rounded, size: 22),
-            onPressed: _load,
-          ),
+          if (_silentRefreshing)
+            const Padding(
+              padding: EdgeInsets.only(right: 16),
+              child: SizedBox(
+                width: 18, height: 18,
+                child: CircularProgressIndicator(strokeWidth: 2, color: SGColors.live),
+              ),
+            )
+          else
+            IconButton(
+              icon: const Icon(Icons.refresh_rounded, size: 22),
+              onPressed: _load,
+            ),
         ],
       ),
       body: _loading
@@ -99,7 +154,6 @@ class _MatchesScreenState extends State<MatchesScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Teams
             Row(
               children: [
                 Expanded(child: _teamRow(m.teamHome, m.runsFor(m.teamHome.id))),
@@ -109,7 +163,10 @@ class _MatchesScreenState extends State<MatchesScreen> {
             ),
             if (m.note.isNotEmpty) ...[
               const SizedBox(height: 10),
-              Text(m.note, style: TextStyle(fontSize: 12, color: m.isLive ? SGColors.live : SGColors.textMuted)),
+              Text(m.note, style: TextStyle(
+                fontSize: 12,
+                color: m.isLive ? SGColors.live : SGColors.textMuted,
+              )),
             ],
             const SizedBox(height: 6),
             Row(
@@ -121,7 +178,9 @@ class _MatchesScreenState extends State<MatchesScreen> {
                       color: SGColors.live.withValues(alpha: 0.15),
                       borderRadius: BorderRadius.circular(6),
                     ),
-                    child: const Text('LIVE', style: TextStyle(fontSize: 10, fontWeight: FontWeight.w800, color: SGColors.live)),
+                    child: const Text('LIVE', style: TextStyle(
+                      fontSize: 10, fontWeight: FontWeight.w800, color: SGColors.live,
+                    )),
                   ),
                 const Spacer(),
                 Text(m.matchType, style: const TextStyle(fontSize: 11, color: SGColors.textMuted)),
@@ -137,13 +196,19 @@ class _MatchesScreenState extends State<MatchesScreen> {
     final latest = runs.isNotEmpty ? runs.last : null;
     return Row(
       children: [
-        Text(team.short, style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w800, color: SGColors.textPrimary)),
+        Text(team.short, style: const TextStyle(
+          fontSize: 15, fontWeight: FontWeight.w800, color: SGColors.textPrimary,
+        )),
         const Spacer(),
         if (latest != null)
-          Text(latest.scoreString, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w800, color: SGColors.textPrimary)),
+          Text(latest.scoreString, style: const TextStyle(
+            fontSize: 16, fontWeight: FontWeight.w800, color: SGColors.textPrimary,
+          )),
         if (latest != null) ...[
           const SizedBox(width: 6),
-          Text(latest.oversString, style: const TextStyle(fontSize: 11, color: SGColors.textMuted)),
+          Text(latest.oversString, style: const TextStyle(
+            fontSize: 11, color: SGColors.textMuted,
+          )),
         ],
       ],
     );

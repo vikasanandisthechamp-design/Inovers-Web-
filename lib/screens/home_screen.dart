@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../models/cricket_models.dart';
@@ -10,18 +11,47 @@ class HomeScreen extends StatefulWidget {
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   final _api = ApiService();
   List<CricketMatch> _matches  = [];
   bool               _loading  = true;
+  bool               _silentRefreshing = false; // background refresh — no spinner
   String?            _error;
+  Timer?             _pollTimer;
+
+  // Poll every 8s when live matches exist, 30s otherwise — mirrors web app cadence.
+  static const _liveInterval   = Duration(seconds: 8);
+  static const _quietInterval  = Duration(seconds: 30);
 
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     _load();
   }
 
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    _pollTimer?.cancel();
+    _api.dispose();
+    super.dispose();
+  }
+
+  /// Pause polling when the app goes to background (saves battery + quota).
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      _silentRefresh(); // catch up immediately
+      _schedulePoll();
+    } else if (state == AppLifecycleState.paused ||
+               state == AppLifecycleState.detached) {
+      _pollTimer?.cancel();
+      _pollTimer = null;
+    }
+  }
+
+  /// First load — shows full-screen spinner.
   Future<void> _load() async {
     setState(() { _loading = true; _error = null; });
     try {
@@ -30,12 +60,27 @@ class _HomeScreenState extends State<HomeScreen> {
     } catch (e) {
       if (mounted) setState(() { _error = e.toString(); _loading = false; });
     }
+    _schedulePoll();
   }
 
-  @override
-  void dispose() {
-    _api.dispose();
-    super.dispose();
+  /// Subsequent refresh — no spinner, scores just slide in.
+  Future<void> _silentRefresh() async {
+    if (_silentRefreshing) return;
+    _silentRefreshing = true;
+    try {
+      final matches = await _api.getLiveMatches();
+      if (mounted) setState(() => _matches = matches);
+    } catch (_) { /* network blip — keep stale data */ }
+    _silentRefreshing = false;
+  }
+
+  void _schedulePoll() {
+    _pollTimer?.cancel();
+    final hasLive = _matches.any((m) => m.isLive);
+    _pollTimer = Timer.periodic(
+      hasLive ? _liveInterval : _quietInterval,
+      (_) => _silentRefresh(),
+    );
   }
 
   @override
@@ -48,7 +93,21 @@ class _HomeScreenState extends State<HomeScreen> {
           Text('AI', style: TextStyle(color: Colors.purpleAccent, fontWeight: FontWeight.w800)),
         ]),
         actions: [
-          IconButton(icon: const Icon(Icons.refresh), onPressed: _load),
+          // Pulsing dot when silently refreshing live matches
+          if (_silentRefreshing)
+            const Padding(
+              padding: EdgeInsets.only(right: 16),
+              child: SizedBox(
+                width: 18, height: 18,
+                child: CircularProgressIndicator(strokeWidth: 2, color: SGColors.live),
+              ),
+            )
+          else
+            IconButton(
+              icon: const Icon(Icons.refresh, size: 22),
+              onPressed: _load,
+              tooltip: 'Refresh',
+            ),
         ],
       ),
       body: RefreshIndicator(
