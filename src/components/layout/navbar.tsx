@@ -7,8 +7,9 @@ import { ShineButton } from "@/components/ui/shine-button";
 import { cn } from "@/lib/utils";
 
 const links = [
-  { href: "/#ecosystem", label: "Ecosystem" },
+  { href: "/#features", label: "Platform" },
   { href: "/#how", label: "How it works" },
+  { href: "/#community", label: "Community" },
   { href: "/#institutions", label: "Institutions" },
   { href: "/manifesto", label: "Manifesto" },
 ];

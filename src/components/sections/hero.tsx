@@ -2,28 +2,43 @@
 
 import * as motion from "motion/react-client";
 import { ArrowRight, Sparkles, Play } from "lucide-react";
+import { ParticleNetwork } from "@/components/ui/particle-network";
 import { GridBackground } from "@/components/ui/grid-background";
 import { Orbs } from "@/components/ui/orbs";
+import { FloatingUiCards } from "@/components/ui/floating-ui-cards";
 import { Badge } from "@/components/ui/badge";
 import { ShineButton } from "@/components/ui/shine-button";
 import { AnimatedCounter } from "@/components/ui/animated-counter";
 
 const stats = [
-  { value: 1000, suffix: "+", label: "Founding Innovators" },
-  { value: 250, suffix: "+", label: "Ideas waiting to ship" },
-  { value: 28, suffix: "", label: "States represented" },
+  { value: 1240, suffix: "+", label: "Ideas posted" },
+  { value: 3180, suffix: "+", label: "Builders active" },
+  { value: 74,   suffix: "",  label: "Projects launched" },
 ];
-
-const headlineWords = ["Build", "the", "Future.", "Together."];
 
 export function HeroSection() {
   return (
-    <section className="relative isolate overflow-hidden">
+    <section className="relative isolate overflow-hidden min-h-[100svh] flex flex-col justify-center">
+      {/* layered background */}
       <div aria-hidden className="absolute inset-0 bg-noise" />
       <GridBackground />
       <Orbs />
+      <div className="absolute inset-0">
+        <ParticleNetwork color="#a78bfa" density={0.14} linkDistance={130} />
+      </div>
+      <FloatingUiCards />
 
-      <div className="container-page relative pt-36 pb-28 md:pt-44 md:pb-36 min-h-[100svh] flex flex-col justify-center">
+      {/* vignette */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0"
+        style={{
+          background:
+            "radial-gradient(ellipse 80% 60% at 50% 40%, transparent 35%, rgba(5,5,11,0.65) 80%, rgba(5,5,11,0.95) 100%)",
+        }}
+      />
+
+      <div className="container-page relative pt-36 pb-24 md:pt-44 md:pb-28">
         <motion.div
           initial={{ opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}
@@ -31,24 +46,19 @@ export function HeroSection() {
           className="flex justify-center"
         >
           <Badge icon={<Sparkles className="h-3 w-3" />}>
-            Bharat&apos;s Innovation Ecosystem · Now Forming
+            The social platform for innovators · Now forming
           </Badge>
         </motion.div>
 
-        <h1 className="mt-7 text-center text-5xl sm:text-6xl md:text-7xl lg:text-[88px] font-semibold tracking-[-0.04em] leading-[0.95] text-white">
+        <h1 className="mt-8 text-center text-[42px] xs:text-5xl sm:text-6xl md:text-7xl lg:text-[96px] font-semibold tracking-[-0.045em] leading-[0.95] text-white">
           <span className="block">
-            {headlineWords.slice(0, 2).map((w, i) => (
-              <RisingWord key={i} delay={0.05 + i * 0.08}>
-                {w}
-              </RisingWord>
-            ))}
-            <RisingWord delay={0.05 + 2 * 0.08} className="text-gradient">
-              {headlineWords[2]}
-            </RisingWord>
+            <RisingWord delay={0.1}>Where</RisingWord>
+            <RisingWord delay={0.18}>ideas</RisingWord>
           </span>
-          <span className="block mt-2">
-            <RisingWord delay={0.5} className="text-gradient-warm">
-              {headlineWords[3]}
+          <span className="block mt-1 md:mt-2">
+            <RisingWord delay={0.28}>become</RisingWord>
+            <RisingWord delay={0.36} className="text-gradient animate-gradient">
+              reality.
             </RisingWord>
           </span>
         </h1>
@@ -56,25 +66,27 @@ export function HeroSection() {
         <motion.p
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7, delay: 0.7 }}
-          className="mt-7 mx-auto max-w-2xl text-center text-base md:text-lg text-white/65 leading-relaxed"
+          transition={{ duration: 0.7, delay: 0.9 }}
+          className="mt-8 mx-auto max-w-2xl text-center text-[15px] md:text-[17px] text-white/60 leading-relaxed tracking-wide"
         >
-          Inovers is where ideas meet builders, builders form Pods, and Pods
-          ship real-world projects — for citizens, for startups, for
-          governments. A movement engineered to turn intent into outcome.
+          <span className="text-white/85 font-medium">Post. Collaborate. Build. Fund. Launch.</span>
+          <br />
+          Inovers is the control center for a generation of builders who refuse
+          to wait for permission. Post an idea as easily as a tweet. Watch a
+          team form around it. Ship.
         </motion.p>
 
         <motion.div
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.85 }}
+          transition={{ duration: 0.6, delay: 1.05 }}
           className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-3"
         >
           <ShineButton href="/waitlist" size="lg" variant="primary">
-            Join the Ecosystem <ArrowRight className="h-4 w-4" />
+            Enter Inovers <ArrowRight className="h-4 w-4" />
           </ShineButton>
-          <ShineButton href="/#ecosystem" size="lg" variant="outline">
-            <Play className="h-3.5 w-3.5 fill-current" /> Explore Ideas
+          <ShineButton href="/#features" size="lg" variant="outline">
+            <Play className="h-3.5 w-3.5 fill-current" /> Explore ideas
           </ShineButton>
         </motion.div>
 
@@ -82,10 +94,18 @@ export function HeroSection() {
         <motion.div
           initial={{ opacity: 0, y: 24 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 1 }}
+          transition={{ duration: 0.8, delay: 1.2 }}
           className="mt-20 mx-auto w-full max-w-3xl"
         >
-          <div className="glass rounded-3xl p-6 md:p-8">
+          <div className="glass rounded-3xl p-6 md:p-8 relative overflow-hidden">
+            <span
+              aria-hidden
+              className="pointer-events-none absolute inset-x-0 -top-px h-px"
+              style={{
+                background:
+                  "linear-gradient(90deg, transparent, rgba(167,139,250,0.6), rgba(92,212,255,0.6), transparent)",
+              }}
+            />
             <div className="grid grid-cols-3 divide-x divide-white/[0.06]">
               {stats.map((s, i) => (
                 <div key={i} className="px-4 text-center">
@@ -104,7 +124,7 @@ export function HeroSection() {
               <span className="absolute inset-0 animate-ping rounded-full bg-emerald-400 opacity-60" />
               <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-400" />
             </span>
-            12 builders joined this week
+            Live across 28 states · 12 builders joined this week
           </div>
         </motion.div>
 
@@ -113,11 +133,11 @@ export function HeroSection() {
           aria-hidden
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ delay: 1.4 }}
-          className="absolute bottom-8 left-1/2 -translate-x-1/2 hidden md:flex flex-col items-center gap-2 text-white/30 text-[10px] uppercase tracking-[0.2em]"
+          transition={{ delay: 1.6 }}
+          className="absolute bottom-6 left-1/2 -translate-x-1/2 hidden md:flex flex-col items-center gap-2 text-white/30 text-[10px] uppercase tracking-[0.22em]"
         >
           Scroll
-          <span className="h-8 w-px bg-gradient-to-b from-white/40 to-transparent" />
+          <span className="h-10 w-px bg-gradient-to-b from-white/40 to-transparent" />
         </motion.div>
       </div>
     </section>
@@ -134,11 +154,11 @@ function RisingWord({
   className?: string;
 }) {
   return (
-    <span className="inline-block overflow-hidden align-bottom mr-[0.22em] last:mr-0">
+    <span className="inline-block overflow-hidden align-bottom mr-[0.22em] last:mr-0 pb-[0.04em]">
       <motion.span
         initial={{ y: "110%" }}
         animate={{ y: 0 }}
-        transition={{ duration: 0.85, delay, ease: [0.22, 1, 0.36, 1] }}
+        transition={{ duration: 0.9, delay, ease: [0.22, 1, 0.36, 1] }}
         className={`inline-block ${className}`}
       >
         {children}

@@ -31,10 +31,10 @@ const cols = [
   {
     title: "Platform",
     links: [
-      { href: "/#ecosystem", label: "Ecosystem" },
+      { href: "/#features", label: "Features" },
       { href: "/#how", label: "How it works" },
+      { href: "/#categories", label: "Categories" },
       { href: "/ideas", label: "Idea Wall" },
-      { href: "/waitlist", label: "Founding Innovators" },
     ],
   },
   {
