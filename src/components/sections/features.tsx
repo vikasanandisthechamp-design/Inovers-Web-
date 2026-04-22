@@ -28,7 +28,7 @@ export function FeaturesSection() {
             <Badge icon={<Zap className="h-3 w-3" />}>Platform surfaces</Badge>
           </Reveal>
           <Reveal delay={0.1}>
-            <h2 className="mt-6 text-4xl md:text-6xl font-semibold tracking-[-0.035em] leading-[1.04] text-white">
+            <h2 className="mt-6 text-[34px] sm:text-5xl md:text-6xl font-semibold tracking-[-0.035em] leading-[1.04] text-white">
               Five surfaces.
               <br />
               <span className="text-gradient">One operating system</span>{" "}
@@ -45,7 +45,7 @@ export function FeaturesSection() {
         </Reveal>
       </div>
 
-      <div className="grid gap-5 lg:grid-cols-6">
+      <div className="grid gap-4 md:gap-5 lg:grid-cols-6">
         {/* 1. Idea Feed — wide */}
         <FeatureCard className="lg:col-span-4" tone="#5cd4ff">
           <FeatureHead
@@ -268,7 +268,7 @@ function FeatureCard({
       viewport={{ once: true, amount: 0.25 }}
       transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
       whileHover={{ y: -4 }}
-      className={`group relative overflow-hidden rounded-2xl glass p-6 md:p-7 transition-colors hover:border-white/20 ${className}`}
+      className={`group relative overflow-hidden rounded-2xl glass p-5 md:p-7 transition-colors hover:border-white/20 ${className}`}
     >
       <span
         aria-hidden

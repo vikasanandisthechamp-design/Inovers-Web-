@@ -33,7 +33,7 @@ export function InstitutionsSection() {
               <Badge icon={<Building2 className="h-3 w-3" />}>
                 For Government, Universities & Foundations
               </Badge>
-              <h2 className="mt-6 text-4xl md:text-5xl lg:text-[56px] font-semibold tracking-[-0.03em] leading-[1.05] text-white">
+              <h2 className="mt-6 text-[32px] sm:text-4xl md:text-5xl lg:text-[56px] font-semibold tracking-[-0.03em] leading-[1.05] text-white">
                 Mobilize 10,000 builders
                 <br />
                 for one initiative.

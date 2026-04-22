@@ -35,7 +35,7 @@ export function CategoriesSection() {
             <Badge>Innovation categories</Badge>
           </Reveal>
           <Reveal delay={0.1}>
-            <h2 className="mt-6 text-4xl md:text-5xl font-semibold tracking-[-0.035em] leading-[1.04] text-white">
+            <h2 className="mt-6 text-[32px] sm:text-4xl md:text-5xl font-semibold tracking-[-0.035em] leading-[1.04] text-white">
               Every corner of the
               <br />
               <span className="text-gradient-warm">Bharat innovation map.</span>

@@ -31,7 +31,7 @@ export function CtaSection() {
             <p className="text-[11px] uppercase tracking-[0.3em] text-white/50 mb-5">
               Final boarding call
             </p>
-            <h2 className="text-5xl md:text-7xl lg:text-[88px] font-semibold tracking-[-0.04em] leading-[0.95] text-white max-w-4xl mx-auto">
+            <h2 className="text-[42px] sm:text-6xl md:text-7xl lg:text-[88px] font-semibold tracking-[-0.04em] leading-[0.95] text-white max-w-4xl mx-auto">
               Don&apos;t just scroll.
               <br />
               <span className="text-gradient-warm">Build.</span>

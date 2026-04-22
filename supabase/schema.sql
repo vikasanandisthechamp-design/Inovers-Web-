@@ -117,3 +117,79 @@ drop trigger if exists on_auth_user_created on auth.users;
 create trigger on_auth_user_created
 after insert on auth.users
 for each row execute function public.handle_new_user();
+
+-- 8. Public activity feed (safe columns only) -------------------------
+-- Exposes a stream of recent community events to anon callers, without
+-- leaking private fields like email or "why". Callable via Supabase RPC:
+--   supabase.rpc('recent_activity', { lim: 20 })
+create or replace function public.recent_activity(lim int default 20)
+returns table (
+  kind        text,
+  who         text,
+  city        text,
+  what        text,
+  created_at  timestamptz
+)
+language sql
+stable
+security definer
+set search_path = public
+as $$
+  select kind, who, city, what, created_at from (
+    -- Waitlist signups — expose first name + city only
+    select
+      'joined'::text                              as kind,
+      coalesce(nullif(split_part(name, ' ', 1), ''), 'Someone') || '.' as who,
+      city                                        as city,
+      'joined as a Founding Innovator'::text      as what,
+      created_at
+    from public.waitlist
+
+    union all
+
+    -- New ideas
+    select
+      'idea'::text                                as kind,
+      coalesce(p.name, 'An innovator')            as who,
+      coalesce(p.city, '—')                       as city,
+      'posted: ' || left(i.title, 80)             as what,
+      i.created_at
+    from public.ideas i
+    left join public.profiles p on p.id = i.author_id
+
+    union all
+
+    -- Interest signals on ideas
+    select
+      'interest'::text                            as kind,
+      coalesce(p.name, 'An innovator')            as who,
+      coalesce(p.city, '—')                       as city,
+      'signalled interest in: ' || left(i.title, 60) as what,
+      ii.created_at
+    from public.idea_interests ii
+    join public.ideas     i on i.id = ii.idea_id
+    left join public.profiles p on p.id = ii.user_id
+
+    union all
+
+    -- Pods forming
+    select
+      'pod'::text                                 as kind,
+      coalesce(pd.name, 'A Pod')                  as who,
+      coalesce(pr.city, '—')                      as city,
+      'formed around ' || coalesce(left(i.title, 50), 'an idea') as what,
+      pd.created_at
+    from public.pods pd
+    left join public.ideas    i  on i.id = pd.idea_id
+    left join public.profiles pr on pr.id = pd.lead_id
+  ) events
+  order by created_at desc
+  limit greatest(1, least(lim, 100));
+$$;
+
+grant execute on function public.recent_activity(int) to anon, authenticated;
+
+-- Helpful realtime-friendly indexes --------------------------------------
+create index if not exists waitlist_created_idx       on public.waitlist      (created_at desc);
+create index if not exists idea_interests_created_idx on public.idea_interests (created_at desc);
+create index if not exists pods_created_idx           on public.pods          (created_at desc);

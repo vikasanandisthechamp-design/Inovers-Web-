@@ -44,7 +44,7 @@ export function SuccessStoriesSection() {
             <Badge icon={<Sparkle className="h-3 w-3" />}>Vision Stories</Badge>
           </Reveal>
           <Reveal delay={0.1}>
-            <h2 className="mt-6 text-4xl md:text-6xl font-semibold tracking-[-0.03em] leading-[1.05] text-white">
+            <h2 className="mt-6 text-[32px] sm:text-5xl md:text-6xl font-semibold tracking-[-0.03em] leading-[1.05] text-white">
               The kind of work
               <br />
               <span className="text-gradient-warm">we&apos;re here to ship.</span>

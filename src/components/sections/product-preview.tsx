@@ -27,7 +27,7 @@ export function ProductPreviewSection() {
             <Badge>What is Inovers</Badge>
           </Reveal>
           <Reveal delay={0.1}>
-            <h2 className="mt-6 text-4xl md:text-5xl lg:text-[56px] font-semibold tracking-[-0.035em] leading-[1.04] text-white">
+            <h2 className="mt-6 text-[32px] sm:text-4xl md:text-5xl lg:text-[56px] font-semibold tracking-[-0.035em] leading-[1.04] text-white">
               A social network,
               <br />
               <span className="text-gradient">engineered for execution.</span>

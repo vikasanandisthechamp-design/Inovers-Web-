@@ -66,7 +66,7 @@ export function CommunitySection() {
           </Badge>
         </Reveal>
         <Reveal delay={0.1}>
-          <h2 className="mt-6 text-4xl md:text-6xl font-semibold tracking-[-0.035em] leading-[1.04] text-white">
+          <h2 className="mt-6 text-[34px] sm:text-5xl md:text-6xl font-semibold tracking-[-0.035em] leading-[1.04] text-white">
             Three tribes.
             <br />
             <span className="text-gradient">One feed.</span>

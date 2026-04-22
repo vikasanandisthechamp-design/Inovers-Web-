@@ -63,7 +63,7 @@ export function HeroSection() {
 
       <motion.div
         style={{ y: contentY }}
-        className="container-page relative pt-36 pb-24 md:pt-44 md:pb-28"
+        className="container-page relative pt-28 pb-20 md:pt-44 md:pb-28"
       >
         <motion.div
           initial={{ opacity: 0, y: 8 }}
@@ -76,7 +76,7 @@ export function HeroSection() {
           </Badge>
         </motion.div>
 
-        <h1 className="mt-8 text-center text-[42px] xs:text-5xl sm:text-6xl md:text-7xl lg:text-[96px] font-semibold tracking-[-0.045em] leading-[0.95] text-white">
+        <h1 className="mt-6 md:mt-8 text-center text-[36px] sm:text-5xl md:text-7xl lg:text-[96px] font-semibold tracking-[-0.04em] md:tracking-[-0.045em] leading-[0.98] md:leading-[0.95] text-white">
           <span className="block">
             <RisingWord delay={0.1}>Where</RisingWord>
             <RisingWord delay={0.18}>ideas</RisingWord>
@@ -93,7 +93,7 @@ export function HeroSection() {
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7, delay: 0.9 }}
-          className="mt-8 mx-auto max-w-2xl text-center text-[15px] md:text-[17px] text-white/60 leading-relaxed tracking-wide"
+          className="mt-6 md:mt-8 mx-auto max-w-2xl text-center text-[14px] md:text-[17px] text-white/60 leading-relaxed tracking-wide px-2"
         >
           <span className="text-white/85 font-medium">Post. Collaborate. Build. Fund. Launch.</span>
           <br />
@@ -121,9 +121,9 @@ export function HeroSection() {
           initial={{ opacity: 0, y: 24 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 1.2 }}
-          className="mt-20 mx-auto w-full max-w-3xl"
+          className="mt-14 md:mt-20 mx-auto w-full max-w-3xl"
         >
-          <div className="glass rounded-3xl p-6 md:p-8 relative overflow-hidden">
+          <div className="glass rounded-2xl md:rounded-3xl p-4 md:p-8 relative overflow-hidden">
             <span
               aria-hidden
               className="pointer-events-none absolute inset-x-0 -top-px h-px"
@@ -134,11 +134,11 @@ export function HeroSection() {
             />
             <div className="grid grid-cols-3 divide-x divide-white/[0.06]">
               {stats.map((s, i) => (
-                <div key={i} className="px-4 text-center">
-                  <div className="text-3xl md:text-4xl font-semibold tracking-tight text-white font-[family-name:var(--font-space-grotesk)]">
+                <div key={i} className="px-2 md:px-4 text-center">
+                  <div className="text-2xl md:text-4xl font-semibold tracking-tight text-white font-[family-name:var(--font-space-grotesk)]">
                     <AnimatedCounter value={s.value} suffix={s.suffix} />
                   </div>
-                  <div className="mt-1.5 text-[11px] uppercase tracking-wider text-white/50">
+                  <div className="mt-1.5 text-[10px] md:text-[11px] uppercase tracking-wider text-white/50 leading-tight">
                     {s.label}
                   </div>
                 </div>

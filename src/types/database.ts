@@ -168,7 +168,18 @@ export type Database = {
       };
     };
     Views: Record<string, never>;
-    Functions: Record<string, never>;
+    Functions: {
+      recent_activity: {
+        Args: { lim?: number };
+        Returns: {
+          kind: "joined" | "idea" | "interest" | "pod";
+          who: string;
+          city: string;
+          what: string;
+          created_at: string;
+        }[];
+      };
+    };
     Enums: {
       idea_stage:
         | "spark"
