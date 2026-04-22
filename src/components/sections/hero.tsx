@@ -1,6 +1,8 @@
 "use client";
 
+import { useRef } from "react";
 import * as motion from "motion/react-client";
+import { useScroll, useTransform } from "motion/react";
 import { ArrowRight, Sparkles, Play } from "lucide-react";
 import { ParticleNetwork } from "@/components/ui/particle-network";
 import { GridBackground } from "@/components/ui/grid-background";
@@ -17,16 +19,37 @@ const stats = [
 ];
 
 export function HeroSection() {
+  const ref = useRef<HTMLElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: ref,
+    offset: ["start start", "end start"],
+  });
+  const bgY = useTransform(scrollYProgress, [0, 1], ["0%", "20%"]);
+  const midY = useTransform(scrollYProgress, [0, 1], ["0%", "-10%"]);
+  const bgOpacity = useTransform(scrollYProgress, [0, 0.9], [1, 0]);
+  const contentY = useTransform(scrollYProgress, [0, 1], ["0%", "-6%"]);
+
   return (
-    <section className="relative isolate overflow-hidden min-h-[100svh] flex flex-col justify-center">
+    <section
+      ref={ref}
+      className="relative isolate overflow-hidden min-h-[100svh] flex flex-col justify-center"
+    >
       {/* layered background */}
       <div aria-hidden className="absolute inset-0 bg-noise" />
       <GridBackground />
-      <Orbs />
-      <div className="absolute inset-0">
+      <motion.div
+        aria-hidden
+        style={{ y: bgY, opacity: bgOpacity }}
+        className="absolute inset-0"
+      >
+        <Orbs />
+      </motion.div>
+      <motion.div style={{ y: midY, opacity: bgOpacity }} className="absolute inset-0">
         <ParticleNetwork color="#a78bfa" density={0.14} linkDistance={130} />
-      </div>
-      <FloatingUiCards />
+      </motion.div>
+      <motion.div style={{ y: midY }} className="absolute inset-0">
+        <FloatingUiCards />
+      </motion.div>
 
       {/* vignette */}
       <div
@@ -38,7 +61,10 @@ export function HeroSection() {
         }}
       />
 
-      <div className="container-page relative pt-36 pb-24 md:pt-44 md:pb-28">
+      <motion.div
+        style={{ y: contentY }}
+        className="container-page relative pt-36 pb-24 md:pt-44 md:pb-28"
+      >
         <motion.div
           initial={{ opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}
@@ -139,7 +165,7 @@ export function HeroSection() {
           Scroll
           <span className="h-10 w-px bg-gradient-to-b from-white/40 to-transparent" />
         </motion.div>
-      </div>
+      </motion.div>
     </section>
   );
 }

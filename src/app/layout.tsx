@@ -3,6 +3,8 @@ import { Inter, Space_Grotesk } from "next/font/google";
 import "./globals.css";
 import { Navbar } from "@/components/layout/navbar";
 import { Footer } from "@/components/layout/footer";
+import { ScrollProgress } from "@/components/ui/scroll-progress";
+import { CursorGlow } from "@/components/ui/cursor-glow";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -45,6 +47,8 @@ export default function RootLayout({
       className={`${inter.variable} ${spaceGrotesk.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col bg-[var(--bg-base)] text-[var(--fg)] overflow-x-hidden">
+        <ScrollProgress />
+        <CursorGlow />
         <Navbar />
         <main className="flex-1">{children}</main>
         <Footer />
