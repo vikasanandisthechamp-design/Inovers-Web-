@@ -1,47 +1,53 @@
-import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import type { Metadata, Viewport } from "next";
+import { Inter, Space_Grotesk } from "next/font/google";
 import "./globals.css";
-import { SiteHeader } from "@/components/site-header";
-import { SiteFooter } from "@/components/site-footer";
+import { Navbar } from "@/components/layout/navbar";
+import { Footer } from "@/components/layout/footer";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const inter = Inter({
+  variable: "--font-inter",
   subsets: ["latin"],
+  display: "swap",
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const spaceGrotesk = Space_Grotesk({
+  variable: "--font-space-grotesk",
   subsets: ["latin"],
+  display: "swap",
 });
 
 export const metadata: Metadata = {
-  title: "Inovers — Bharat's community-powered innovation ecosystem",
+  title: "Inovers — Build the Future. Together.",
   description:
-    "Share ideas, form Pods, and execute real-world projects with a community of innovators. Inovers is where ideas become outcomes.",
+    "Bharat's community-powered innovation ecosystem. Share ideas, form Pods, ship real projects with a movement of innovators.",
   metadataBase: new URL("https://inovers.in"),
   openGraph: {
-    title: "Inovers — Where Bharat's ideas become reality",
+    title: "Inovers — Build the Future. Together.",
     description:
-      "A community-powered innovation ecosystem. Ideas, Pods, and real-world projects — built collaboratively.",
+      "A community-powered innovation ecosystem. Ideas, Pods, projects — built collaboratively.",
     type: "website",
     locale: "en_IN",
   },
 };
 
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  themeColor: "#05050b",
+};
+
 export default function RootLayout({
   children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+}: Readonly<{ children: React.ReactNode }>) {
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      className={`${inter.variable} ${spaceGrotesk.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col">
-        <SiteHeader />
+      <body className="min-h-full flex flex-col bg-[var(--bg-base)] text-[var(--fg)] overflow-x-hidden">
+        <Navbar />
         <main className="flex-1">{children}</main>
-        <SiteFooter />
+        <Footer />
       </body>
     </html>
   );

@@ -2,7 +2,9 @@
 
 import { useState } from "react";
 import { z } from "zod";
+import { CheckCircle2 } from "lucide-react";
 import { getSupabaseBrowserClient } from "@/lib/supabase/client";
+import { ShineButton } from "@/components/ui/shine-button";
 
 const schema = z.object({
   name: z.string().trim().min(2, "Tell us your name"),
@@ -48,7 +50,7 @@ export function WaitlistForm() {
     const supabase = getSupabaseBrowserClient();
     if (!supabase) {
       setStatus("error");
-      setErrorMsg("Waitlist is not configured yet. Check back shortly.");
+      setErrorMsg("Waitlist isn't connected yet. Check back shortly.");
       return;
     }
 
@@ -69,18 +71,21 @@ export function WaitlistForm() {
       );
       return;
     }
-
     setStatus("success");
   }
 
   if (status === "success") {
     return (
-      <div className="text-center py-6">
-        <div className="text-3xl mb-3">🎉</div>
-        <h3 className="text-xl font-semibold">You&apos;re in.</h3>
-        <p className="mt-2 text-muted-foreground">
-          Welcome to Inovers. We&apos;ll reach out soon with your Founding
-          Innovator invite.
+      <div className="text-center py-10">
+        <div className="mx-auto h-14 w-14 rounded-full border border-[var(--neon-cyan)]/40 bg-[var(--neon-cyan)]/10 flex items-center justify-center text-[var(--neon-cyan)]">
+          <CheckCircle2 className="h-7 w-7" />
+        </div>
+        <h3 className="mt-5 text-2xl font-semibold tracking-tight text-white">
+          You&apos;re in.
+        </h3>
+        <p className="mt-2 text-white/65 max-w-sm mx-auto">
+          Welcome to Inovers. We&apos;ll reach out within a week with your
+          Founding Innovator invite.
         </p>
       </div>
     );
@@ -90,33 +95,39 @@ export function WaitlistForm() {
     <form onSubmit={onSubmit} className="space-y-4">
       <Field label="Your name" name="name" placeholder="Ravi Kumar" error={fieldErrors.name} />
       <Field label="Email" name="email" type="email" placeholder="you@example.com" error={fieldErrors.email} />
-      <Field label="City" name="city" placeholder="Bengaluru" error={fieldErrors.city} />
-      <Field label="Skills or interests" name="skills" placeholder="Design, Flutter, policy research, storytelling…" error={fieldErrors.skills} />
+      <div className="grid sm:grid-cols-2 gap-4">
+        <Field label="City" name="city" placeholder="Bengaluru" error={fieldErrors.city} />
+        <Field label="Skills" name="skills" placeholder="Design, Flutter, policy…" error={fieldErrors.skills} />
+      </div>
       <div>
-        <label className="block text-sm font-medium mb-1.5">Why do you want in? <span className="text-muted-foreground font-normal">(optional)</span></label>
+        <label className="block text-xs font-medium uppercase tracking-wider text-white/55 mb-2">
+          Why do you want in? <span className="text-white/40 lowercase tracking-normal font-normal">(optional)</span>
+        </label>
         <textarea
           name="why"
           rows={3}
-          placeholder="A problem you want to solve, an idea you have, a skill you want to use…"
-          className="w-full rounded-lg border border-border bg-background px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-ring/40 focus:border-ring"
+          placeholder="A problem you want to solve, a skill you want to use…"
+          className="w-full rounded-xl bg-white/[0.03] border border-white/10 px-4 py-3 text-sm text-white placeholder:text-white/30 outline-none focus:border-white/30 focus:bg-white/[0.05] transition-colors"
         />
       </div>
 
       {errorMsg && (
-        <p className="text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg px-3 py-2">
+        <div className="rounded-xl border border-[var(--neon-pink)]/30 bg-[var(--neon-pink)]/[0.06] px-4 py-3 text-sm text-[var(--neon-pink)]">
           {errorMsg}
-        </p>
+        </div>
       )}
 
-      <button
+      <ShineButton
         type="submit"
+        variant="primary"
+        size="lg"
         disabled={status === "submitting"}
-        className="w-full h-11 rounded-full bg-primary text-primary-foreground font-semibold text-sm hover:opacity-90 transition-opacity disabled:opacity-60"
+        className="w-full mt-2"
       >
-        {status === "submitting" ? "Joining…" : "Join the Waitlist"}
-      </button>
-      <p className="text-xs text-muted-foreground text-center">
-        We&apos;ll never spam you. No ads. Ever.
+        {status === "submitting" ? "Joining…" : "Claim my spot"}
+      </ShineButton>
+      <p className="text-[11px] uppercase tracking-wider text-white/40 text-center">
+        No spam. No ads. Ever.
       </p>
     </form>
   );
@@ -137,14 +148,16 @@ function Field({
 }) {
   return (
     <div>
-      <label className="block text-sm font-medium mb-1.5">{label}</label>
+      <label className="block text-xs font-medium uppercase tracking-wider text-white/55 mb-2">
+        {label}
+      </label>
       <input
         name={name}
         type={type}
         placeholder={placeholder}
-        className="w-full h-11 rounded-lg border border-border bg-background px-3 text-sm outline-none focus:ring-2 focus:ring-ring/40 focus:border-ring"
+        className="w-full h-12 rounded-xl bg-white/[0.03] border border-white/10 px-4 text-sm text-white placeholder:text-white/30 outline-none focus:border-white/30 focus:bg-white/[0.05] transition-colors"
       />
-      {error && <p className="mt-1 text-xs text-red-600">{error}</p>}
+      {error && <p className="mt-1.5 text-xs text-[var(--neon-pink)]">{error}</p>}
     </div>
   );
 }

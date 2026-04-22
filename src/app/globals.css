@@ -1,55 +1,231 @@
 @import "tailwindcss";
 
+/* =========================================================================
+   Inovers design tokens — dark premium, neon accents
+   ========================================================================= */
 :root {
-  --background: #ffffff;
-  --foreground: #0a0a14;
-  --muted: #f5f5f7;
-  --muted-foreground: #6b6b76;
-  --border: #e6e6ea;
-  --primary: #2b2bff;
-  --primary-foreground: #ffffff;
-  --accent: #ff6b1a;
-  --accent-foreground: #ffffff;
-  --ring: #2b2bff;
+  --bg-base:        #05050b;
+  --bg-raised:      #0a0a14;
+  --bg-elevated:    #10101c;
+  --fg:             #f5f5fb;
+  --fg-muted:       #8b8b9c;
+  --fg-dim:         #55556a;
+  --border:         rgba(255, 255, 255, 0.08);
+  --border-strong:  rgba(255, 255, 255, 0.14);
+
+  --neon-cyan:      #5cd4ff;
+  --neon-violet:    #a78bfa;
+  --neon-pink:      #f472b6;
+  --neon-ember:     #ff9257;
+
+  --glow-cyan:      0 0 40px rgba(92, 212, 255, 0.35);
+  --glow-violet:    0 0 60px rgba(167, 139, 250, 0.35);
+
+  color-scheme: dark;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --color-muted: var(--muted);
-  --color-muted-foreground: var(--muted-foreground);
+  --color-background: var(--bg-base);
+  --color-foreground: var(--fg);
+  --color-muted: var(--bg-raised);
+  --color-muted-foreground: var(--fg-muted);
   --color-border: var(--border);
-  --color-primary: var(--primary);
-  --color-primary-foreground: var(--primary-foreground);
-  --color-accent: var(--accent);
-  --color-accent-foreground: var(--accent-foreground);
-  --color-ring: var(--ring);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-primary: var(--neon-cyan);
+  --color-accent: var(--neon-violet);
+  --font-sans: var(--font-inter);
+  --font-display: var(--font-space-grotesk);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #07070b;
-    --foreground: #fafafc;
-    --muted: #121218;
-    --muted-foreground: #9898a3;
-    --border: #1f1f27;
-    --primary: #5a5aff;
-    --primary-foreground: #ffffff;
-    --accent: #ff8a3d;
-  }
-}
-
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: var(--font-sans), system-ui, -apple-system, sans-serif;
+html, body {
+  background: var(--bg-base);
+  color: var(--fg);
+  font-family: var(--font-inter), system-ui, -apple-system, sans-serif;
   -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
 }
 
+*::selection {
+  background: rgba(167, 139, 250, 0.35);
+  color: #fff;
+}
+
+/* =========================================================================
+   Layout helpers
+   ========================================================================= */
 .container-page {
-  max-width: 1200px;
+  max-width: 1280px;
   margin-inline: auto;
-  padding-inline: 1.25rem;
+  padding-inline: 1.5rem;
+}
+
+@media (min-width: 768px) {
+  .container-page { padding-inline: 2rem; }
+}
+
+/* =========================================================================
+   Premium surfaces — glassmorphism
+   ========================================================================= */
+.glass {
+  background: linear-gradient(180deg, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0.01) 100%);
+  border: 1px solid var(--border);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+
+.glass-strong {
+  background: linear-gradient(180deg, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0.02) 100%);
+  border: 1px solid var(--border-strong);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+}
+
+/* =========================================================================
+   Gradient text + borders
+   ========================================================================= */
+.text-gradient {
+  background: linear-gradient(135deg, #ffffff 0%, #c4b5fd 35%, #5cd4ff 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.text-gradient-warm {
+  background: linear-gradient(135deg, #ffffff 0%, #ff9257 60%, #f472b6 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.border-gradient {
+  position: relative;
+  background-clip: padding-box;
+  border: 1px solid transparent;
+}
+
+.border-gradient::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  padding: 1px;
+  border-radius: inherit;
+  background: linear-gradient(135deg, rgba(92,212,255,0.5), rgba(167,139,250,0.5), rgba(244,114,182,0.3));
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+          mask-composite: exclude;
+  pointer-events: none;
+}
+
+/* =========================================================================
+   Grid + dots backgrounds
+   ========================================================================= */
+.bg-grid {
+  background-image:
+    linear-gradient(to right, rgba(255,255,255,0.04) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255,255,255,0.04) 1px, transparent 1px);
+  background-size: 64px 64px;
+}
+
+.bg-grid-fade {
+  mask-image: radial-gradient(ellipse 60% 55% at 50% 45%, #000 30%, transparent 85%);
+  -webkit-mask-image: radial-gradient(ellipse 60% 55% at 50% 45%, #000 30%, transparent 85%);
+}
+
+.bg-dots {
+  background-image: radial-gradient(rgba(255,255,255,0.06) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+
+.bg-noise::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.03;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='220' height='220'><filter id='n'><feTurbulence baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)' opacity='1'/></svg>");
+}
+
+/* =========================================================================
+   Glow effects
+   ========================================================================= */
+.glow-cyan  { box-shadow: 0 0 40px rgba(92, 212, 255, 0.35); }
+.glow-violet{ box-shadow: 0 0 60px rgba(167, 139, 250, 0.35); }
+.glow-ember { box-shadow: 0 0 50px rgba(255, 146, 87, 0.35); }
+
+/* =========================================================================
+   Shine button
+   ========================================================================= */
+.btn-shine {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+}
+.btn-shine::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(120deg, transparent 30%, rgba(255,255,255,0.35) 50%, transparent 70%);
+  transform: translateX(-120%);
+  transition: transform 0.8s ease;
+}
+.btn-shine:hover::after { transform: translateX(120%); }
+
+/* =========================================================================
+   Animations
+   ========================================================================= */
+@keyframes float-y {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-14px); }
+}
+@keyframes pulse-glow {
+  0%, 100% { opacity: 0.55; filter: blur(56px); }
+  50%      { opacity: 0.85; filter: blur(72px); }
+}
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+@keyframes marquee-y {
+  from { transform: translateY(0); }
+  to   { transform: translateY(-50%); }
+}
+@keyframes orbit-slow {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+@keyframes gradient-pan {
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.animate-float       { animation: float-y 6s ease-in-out infinite; }
+.animate-float-slow  { animation: float-y 10s ease-in-out infinite; }
+.animate-pulse-glow  { animation: pulse-glow 6s ease-in-out infinite; }
+.animate-marquee     { animation: marquee 40s linear infinite; }
+.animate-marquee-y   { animation: marquee-y 28s linear infinite; }
+.animate-orbit       { animation: orbit-slow 40s linear infinite; }
+.animate-gradient    { background-size: 200% 200%; animation: gradient-pan 10s ease infinite; }
+
+/* =========================================================================
+   Scrollbar
+   ========================================================================= */
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: var(--bg-base); }
+::-webkit-scrollbar-thumb {
+  background: rgba(255,255,255,0.08);
+  border-radius: 10px;
+}
+::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.16); }
+
+/* =========================================================================
+   Utility
+   ========================================================================= */
+.reduce-motion *,
+.reduce-motion *::before,
+.reduce-motion *::after {
+  animation: none !important;
+  transition: none !important;
 }
