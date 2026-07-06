@@ -40,10 +40,10 @@ const cols = [
   {
     title: "For Builders",
     links: [
+      { href: "/accelerator", label: "Accelerator" },
       { href: "/waitlist", label: "Join a Pod" },
       { href: "/#stories", label: "Showcase" },
       { href: "/manifesto", label: "Manifesto" },
-      { href: "/#live", label: "Live activity" },
     ],
   },
   {

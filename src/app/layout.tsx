@@ -1,10 +1,6 @@
 import type { Metadata, Viewport } from "next";
-import { Inter, Space_Grotesk } from "next/font/google";
+import { Inter, Space_Grotesk, IBM_Plex_Mono, Caveat } from "next/font/google";
 import "./globals.css";
-import { Navbar } from "@/components/layout/navbar";
-import { Footer } from "@/components/layout/footer";
-import { ScrollProgress } from "@/components/ui/scroll-progress";
-import { CursorGlow } from "@/components/ui/cursor-glow";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -18,11 +14,24 @@ const spaceGrotesk = Space_Grotesk({
   display: "swap",
 });
 
+const plexMono = IBM_Plex_Mono({
+  variable: "--font-plex-mono",
+  subsets: ["latin"],
+  weight: ["400", "500", "600"],
+  display: "swap",
+});
+
+const caveat = Caveat({
+  variable: "--font-caveat",
+  subsets: ["latin"],
+  display: "swap",
+});
+
 export const metadata: Metadata = {
   title: "Inovers — Build the Future. Together.",
   description:
     "Bharat's community-powered innovation ecosystem. Share ideas, form Pods, ship real projects with a movement of innovators.",
-  metadataBase: new URL("https://inovers.in"),
+  metadataBase: new URL("https://www.inovers.io"),
   openGraph: {
     title: "Inovers — Build the Future. Together.",
     description:
@@ -44,14 +53,10 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${inter.variable} ${spaceGrotesk.variable} h-full antialiased`}
+      className={`${inter.variable} ${spaceGrotesk.variable} ${plexMono.variable} ${caveat.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col bg-[var(--bg-base)] text-[var(--fg)] overflow-x-hidden">
-        <ScrollProgress />
-        <CursorGlow />
-        <Navbar />
-        <main className="flex-1">{children}</main>
-        <Footer />
+        {children}
       </body>
     </html>
   );

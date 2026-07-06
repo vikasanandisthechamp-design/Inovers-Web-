@@ -166,6 +166,100 @@ export type Database = {
         >;
         Relationships: [];
       };
+      accelerator_leads: {
+        Row: {
+          id: string;
+          created_at: string;
+          cohort_code: string;
+          name: string;
+          email: string;
+          city: string | null;
+          role:
+            | "founder"
+            | "investor"
+            | "mentor"
+            | "operator"
+            | "corporate_partner"
+            | "student"
+            | "media"
+            | "other";
+          startup_url: string | null;
+          interest: string | null;
+          source: string | null;
+        };
+        Insert: {
+          id?: string;
+          created_at?: string;
+          cohort_code?: string;
+          name: string;
+          email: string;
+          city?: string | null;
+          role:
+            | "founder"
+            | "investor"
+            | "mentor"
+            | "operator"
+            | "corporate_partner"
+            | "student"
+            | "media"
+            | "other";
+          startup_url?: string | null;
+          interest?: string | null;
+          source?: string | null;
+        };
+        Update: Partial<
+          Database["public"]["Tables"]["accelerator_leads"]["Insert"]
+        >;
+        Relationships: [];
+      };
+      accelerator_applications: {
+        Row: {
+          id: string;
+          created_at: string;
+          cohort_code: string;
+          application_code: string;
+          email: string;
+          founder_name: string;
+          startup_name: string | null;
+          city: string | null;
+          status:
+            | "submitted"
+            | "in_review"
+            | "interview"
+            | "diligence"
+            | "selected"
+            | "rejected"
+            | "withdrawn";
+          answers: Record<string, unknown>;
+          review_score: number | null;
+          review_notes: string | null;
+        };
+        Insert: {
+          id?: string;
+          created_at?: string;
+          cohort_code?: string;
+          application_code: string;
+          email: string;
+          founder_name: string;
+          startup_name?: string | null;
+          city?: string | null;
+          status?:
+            | "submitted"
+            | "in_review"
+            | "interview"
+            | "diligence"
+            | "selected"
+            | "rejected"
+            | "withdrawn";
+          answers: Record<string, unknown>;
+          review_score?: number | null;
+          review_notes?: string | null;
+        };
+        Update: Partial<
+          Database["public"]["Tables"]["accelerator_applications"]["Insert"]
+        >;
+        Relationships: [];
+      };
     };
     Views: Record<string, never>;
     Functions: {

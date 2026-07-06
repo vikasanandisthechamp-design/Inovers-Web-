@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { MessageCircle, MapPin } from "lucide-react";
 import { InterestedButton } from "./interested-button";
 

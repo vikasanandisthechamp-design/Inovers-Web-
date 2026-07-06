@@ -25,7 +25,7 @@ export function CursorGlow() {
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     if (!fine || reduce) return;
 
-    setEnabled(true);
+    const enableRaf = requestAnimationFrame(() => setEnabled(true));
 
     let lastX = 0;
     let lastY = 0;
@@ -57,6 +57,7 @@ export function CursorGlow() {
     document.addEventListener("pointerout", onOut, true);
 
     return () => {
+      cancelAnimationFrame(enableRaf);
       window.removeEventListener("pointermove", onMove);
       document.removeEventListener("pointerover", onOver, true);
       document.removeEventListener("pointerout", onOut, true);

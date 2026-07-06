@@ -122,3 +122,19 @@ create policy "pod_members_delete_self"
   on public.pod_members for delete
   to authenticated
   using (user_id = auth.uid());
+
+-- 7. Accelerator (insert-only from clients; admin reads via service role) --
+alter table public.accelerator_leads        enable row level security;
+alter table public.accelerator_applications enable row level security;
+
+drop policy if exists "acc_leads_insert" on public.accelerator_leads;
+create policy "acc_leads_insert"
+  on public.accelerator_leads for insert
+  to anon, authenticated
+  with check (true);
+
+drop policy if exists "acc_applications_insert" on public.accelerator_applications;
+create policy "acc_applications_insert"
+  on public.accelerator_applications for insert
+  to anon, authenticated
+  with check (pg_column_size(answers) < 60000);

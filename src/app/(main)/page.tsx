@@ -8,11 +8,13 @@ import { SuccessStoriesSection } from "@/components/sections/success-stories";
 import { CommunitySection } from "@/components/sections/community";
 import { InstitutionsSection } from "@/components/sections/institutions";
 import { CtaSection } from "@/components/sections/cta";
+import { AcceleratorTakeover } from "@/components/accelerator/homepage-takeover";
 
 export default function HomePage() {
   return (
     <>
       <HeroSection />
+      <AcceleratorTakeover />
       <ProductPreviewSection />
       <HowItWorksSection />
       <FeaturesSection />

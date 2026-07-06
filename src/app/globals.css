@@ -234,3 +234,254 @@ html, body {
   animation: none !important;
   transition: none !important;
 }
+
+/* =========================================================================
+   INOVERS ACCELERATOR — "the notebook and the lab"
+   Warm ink, warm paper, one signal accent. Technical borders, mono
+   annotations, sparse handwriting. Scoped under .acc
+   ========================================================================= */
+.acc {
+  --acc-ink:        #141109;
+  --acc-ink-2:      #1d1910;
+  --acc-ink-3:      #292319;
+  --acc-paper:      #f0ead9;
+  --acc-paper-2:    #e7dfc9;
+  --acc-bone:       #f7f3e8;
+  --acc-graphite:   #57503f;
+  --acc-tech:       #97906f;
+  --acc-signal:     #ff5a1f;
+  --acc-signal-ink: #e04b12;
+
+  --acc-line-paper:  rgba(20, 17, 9, 0.18);
+  --acc-line-paper-strong: rgba(20, 17, 9, 0.42);
+  --acc-line-ink:    rgba(240, 234, 217, 0.16);
+  --acc-line-ink-strong: rgba(240, 234, 217, 0.38);
+
+  --font-mono-tech: var(--font-plex-mono), ui-monospace, "SF Mono", monospace;
+  --font-hand: var(--font-caveat), cursive;
+
+  background: var(--acc-ink);
+  color: var(--acc-bone);
+  font-family: var(--font-inter), system-ui, sans-serif;
+}
+
+.acc ::selection {
+  background: rgba(255, 90, 31, 0.85);
+  color: #fff;
+}
+
+/* Environments ---------------------------------------------------------- */
+.acc-ink {
+  background: var(--acc-ink);
+  color: var(--acc-bone);
+  color-scheme: dark;
+}
+.acc-paper {
+  background: var(--acc-paper);
+  color: var(--acc-ink);
+  color-scheme: light;
+}
+.acc-paper ::selection {
+  background: var(--acc-ink);
+  color: var(--acc-paper);
+}
+
+/* Paper grain + blueprint grid ------------------------------------------ */
+.acc-grain {
+  position: relative;
+}
+.acc-grain::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.05;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+}
+.acc-grid-ink {
+  background-image:
+    linear-gradient(to right, var(--acc-line-ink) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--acc-line-ink) 1px, transparent 1px);
+  background-size: 72px 72px;
+}
+.acc-grid-paper {
+  background-image:
+    linear-gradient(to right, rgba(20,17,9,0.07) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(20,17,9,0.07) 1px, transparent 1px);
+  background-size: 72px 72px;
+}
+
+/* Typography ------------------------------------------------------------ */
+.acc-display {
+  font-family: var(--font-space-grotesk), var(--font-inter), sans-serif;
+  font-weight: 600;
+  letter-spacing: -0.035em;
+  line-height: 0.96;
+  text-wrap: balance;
+}
+.acc-mono {
+  font-family: var(--font-mono-tech);
+  font-feature-settings: "tnum";
+}
+.acc-label {
+  font-family: var(--font-mono-tech);
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+.acc-hand {
+  font-family: var(--font-hand);
+  font-size: 1.35em;
+  line-height: 1.15;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+/* Technical frame: thin border + corner ticks ---------------------------- */
+.acc-frame {
+  position: relative;
+  border: 1px solid var(--acc-line-ink);
+}
+.acc-paper .acc-frame,
+.acc-frame.on-paper {
+  border-color: var(--acc-line-paper);
+}
+.acc-frame::before,
+.acc-frame::after,
+.acc-frame > .acc-ticks::before,
+.acc-frame > .acc-ticks::after {
+  content: "";
+  position: absolute;
+  width: 9px;
+  height: 9px;
+  pointer-events: none;
+}
+.acc-frame::before  { top: -5px; left: -5px;  border-top: 1px solid currentColor; border-left: 1px solid currentColor; opacity: 0.6; }
+.acc-frame::after   { top: -5px; right: -5px; border-top: 1px solid currentColor; border-right: 1px solid currentColor; opacity: 0.6; }
+.acc-frame > .acc-ticks::before { bottom: -5px; left: -5px;  border-bottom: 1px solid currentColor; border-left: 1px solid currentColor; opacity: 0.6; }
+.acc-frame > .acc-ticks::after  { bottom: -5px; right: -5px; border-bottom: 1px solid currentColor; border-right: 1px solid currentColor; opacity: 0.6; }
+
+/* Buttons ---------------------------------------------------------------- */
+.acc-btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  font-family: var(--font-mono-tech);
+  font-size: 12.5px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  padding: 0 1.75rem;
+  height: 3.25rem;
+  border: 1px solid transparent;
+  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease, transform 0.15s ease;
+  white-space: nowrap;
+}
+.acc-btn:focus-visible {
+  outline: 2px solid var(--acc-signal);
+  outline-offset: 3px;
+}
+.acc-btn:active { transform: translateY(1px); }
+
+.acc-btn-signal {
+  background: var(--acc-signal);
+  color: #16130e;
+  border-color: var(--acc-signal);
+}
+.acc-btn-signal:hover { background: #ff6f3d; border-color: #ff6f3d; }
+
+.acc-btn-ink {
+  background: transparent;
+  color: var(--acc-bone);
+  border-color: var(--acc-line-ink-strong);
+}
+.acc-btn-ink:hover { border-color: var(--acc-bone); background: rgba(240,234,217,0.05); }
+
+.acc-btn-paper {
+  background: transparent;
+  color: var(--acc-ink);
+  border-color: var(--acc-line-paper-strong);
+}
+.acc-btn-paper:hover { border-color: var(--acc-ink); background: rgba(20,17,9,0.05); }
+
+.acc-btn-solid-ink {
+  background: var(--acc-ink);
+  color: var(--acc-bone);
+  border-color: var(--acc-ink);
+}
+.acc-btn-solid-ink:hover { background: var(--acc-ink-3); }
+
+/* Sketch arrow that redraws on CTA hover --------------------------------- */
+.acc-cta-arrow path {
+  stroke-dasharray: 40;
+  stroke-dashoffset: 0;
+}
+.acc-btn:hover .acc-cta-arrow path {
+  animation: acc-redraw 0.5s ease forwards;
+}
+@keyframes acc-redraw {
+  0%   { stroke-dashoffset: 0; }
+  40%  { stroke-dashoffset: 40; }
+  41%  { stroke-dashoffset: -40; }
+  100% { stroke-dashoffset: 0; }
+}
+
+/* Line-draw for SVG sketches --------------------------------------------- */
+.acc-draw path,
+.acc-draw line,
+.acc-draw circle,
+.acc-draw ellipse,
+.acc-draw rect,
+.acc-draw polyline,
+.acc-draw polygon {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+}
+.acc-draw.is-drawn path,
+.acc-draw.is-drawn line,
+.acc-draw.is-drawn circle,
+.acc-draw.is-drawn ellipse,
+.acc-draw.is-drawn rect,
+.acc-draw.is-drawn polyline,
+.acc-draw.is-drawn polygon {
+  animation: acc-draw-line 1.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+@keyframes acc-draw-line {
+  to { stroke-dashoffset: 0; }
+}
+
+/* Form fields ------------------------------------------------------------ */
+.acc-field {
+  width: 100%;
+  background: rgba(240, 234, 217, 0.03);
+  border: 1px solid var(--acc-line-ink);
+  color: var(--acc-bone);
+  padding: 0.85rem 1rem;
+  font-size: 15px;
+  transition: border-color 0.2s ease, background-color 0.2s ease;
+}
+.acc-field::placeholder { color: rgba(240, 234, 217, 0.32); }
+.acc-field:focus {
+  outline: none;
+  border-color: var(--acc-signal);
+  background: rgba(240, 234, 217, 0.05);
+}
+.acc-field[aria-invalid="true"] { border-color: #e5484d; }
+
+/* Reduced motion ---------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  .acc *,
+  .acc *::before,
+  .acc *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  .acc-draw path, .acc-draw line, .acc-draw circle, .acc-draw ellipse,
+  .acc-draw rect, .acc-draw polyline, .acc-draw polygon {
+    stroke-dasharray: none;
+    stroke-dashoffset: 0;
+  }
+}

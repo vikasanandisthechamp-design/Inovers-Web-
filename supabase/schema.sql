@@ -193,3 +193,47 @@ grant execute on function public.recent_activity(int) to anon, authenticated;
 create index if not exists waitlist_created_idx       on public.waitlist      (created_at desc);
 create index if not exists idea_interests_created_idx on public.idea_interests (created_at desc);
 create index if not exists pods_created_idx           on public.pods          (created_at desc);
+
+-- =====================================================================
+-- INOVERS ACCELERATOR — early-access leads + applications
+-- (applied to Supabase as migration `accelerator_leads_and_applications`)
+-- =====================================================================
+create table if not exists public.accelerator_leads (
+  id           uuid primary key default gen_random_uuid(),
+  created_at   timestamptz not null default now(),
+  cohort_code  text not null default 'INV-01',
+  name         text not null,
+  email        text not null,
+  city         text,
+  role         text not null check (role in
+    ('founder','investor','mentor','operator','corporate_partner','student','media','other')),
+  startup_url  text,
+  interest     text,
+  source       text
+);
+
+create unique index if not exists accelerator_leads_email_cohort_uniq
+  on public.accelerator_leads (cohort_code, lower(email));
+create index if not exists accelerator_leads_created_idx
+  on public.accelerator_leads (created_at desc);
+
+create table if not exists public.accelerator_applications (
+  id               uuid primary key default gen_random_uuid(),
+  created_at       timestamptz not null default now(),
+  cohort_code      text not null default 'INV-01',
+  application_code text not null unique,
+  email            text not null,
+  founder_name     text not null,
+  startup_name     text,
+  city             text,
+  status           text not null default 'submitted' check (status in
+    ('submitted','in_review','interview','diligence','selected','rejected','withdrawn')),
+  answers          jsonb not null,
+  review_score     numeric,
+  review_notes     text
+);
+
+create unique index if not exists accelerator_applications_email_cohort_uniq
+  on public.accelerator_applications (cohort_code, lower(email));
+create index if not exists accelerator_applications_created_idx
+  on public.accelerator_applications (created_at desc);

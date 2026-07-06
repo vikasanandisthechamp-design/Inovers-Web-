@@ -7,12 +7,13 @@ import type { User } from "@supabase/supabase-js";
 import { ShineButton } from "@/components/ui/shine-button";
 import { cn } from "@/lib/utils";
 import { getSupabaseBrowserClient } from "@/lib/supabase/client";
+import { HOMEPAGE_CAMPAIGN_ENABLED } from "@/lib/accelerator/config";
 
-const links = [
+const links: { href: string; label: string; highlight?: boolean }[] = [
   { href: "/#features", label: "Platform" },
   { href: "/#how", label: "How it works" },
   { href: "/ideas", label: "Idea Wall" },
-  { href: "/#community", label: "Community" },
+  { href: "/accelerator", label: "Accelerator", highlight: true },
   { href: "/manifesto", label: "Manifesto" },
 ];
 
@@ -45,7 +46,8 @@ export function Navbar() {
   return (
     <header
       className={cn(
-        "fixed inset-x-0 top-0 z-50 transition-all duration-300",
+        "fixed inset-x-0 z-50 transition-all duration-300",
+        HOMEPAGE_CAMPAIGN_ENABLED ? "top-9" : "top-0",
         scrolled ? "py-2" : "py-4"
       )}
     >
@@ -70,8 +72,16 @@ export function Navbar() {
               <Link
                 key={l.href}
                 href={l.href}
-                className="px-3.5 py-1.5 rounded-full text-white/70 hover:text-white hover:bg-white/[0.06] transition-colors"
+                className={cn(
+                  "px-3.5 py-1.5 rounded-full transition-colors inline-flex items-center gap-1.5",
+                  l.highlight
+                    ? "text-[#ffb38a] hover:text-[#ffc9a8] hover:bg-white/[0.06]"
+                    : "text-white/70 hover:text-white hover:bg-white/[0.06]"
+                )}
               >
+                {l.highlight && (
+                  <span aria-hidden className="h-1.5 w-1.5 rounded-full bg-[#ff5a1f]" />
+                )}
                 {l.label}
               </Link>
             ))}
